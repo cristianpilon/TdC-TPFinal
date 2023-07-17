@@ -1,4 +1,4 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -14,9 +14,9 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
+} */
 
-body {
+/* body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -24,4 +24,118 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+} */
+
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;700&display=swap');
+*{
+    box-sizing: border-box;
+}
+
+.imgDiv{
+    border: 1px solid rgb(149, 191, 255);
+    text-align: center;
+    background-image: url('../../public/home/istockphoto-1153965495-170667a.jpg');
+    background-position: center bottom;
+    background-size: 100% auto ;
+    background-repeat: no-repeat;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+.imgLogin{
+    width: 200px;
+}
+
+label{
+    font-family: 'Mulish', 'bold';
+    font-size: 40pt;
+    color: #04146c;
+    font-weight: 700;
+}
+
+#log{
+    width:500px;
+    height: 50px;
+    margin-bottom: 10px;
+    padding: 10px;
+    /* border: 1px solid #414166; */
+    font-size: 20px;
+    font-weight: 400;
+    border-left: none;
+}
+
+.input1{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.imgUser
+    {
+        width: 47px;
+        height: 47px;
+        margin-left: 2px;
+    }
+
+.Username{
+        border: 1px solid black;
+        background-color: white;
+    }
+
+.Username input#user {
+    width:500px;
+    height: 50px;
+    font-size: 20px;
+    font-weight: 400;
+    border: 0;
+    vertical-align: top;
+}
+
+.input2
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.Username input#psw {
+        width:500px;
+        height: 50px;
+        font-size: 20px;
+        font-weight: 400;
+        border: 0;
+        vertical-align: top;
+}
+
+
+#log{
+    background-color: rgb(4, 4, 100);
+    color: white;
+    font-weight: 600;
+}
+
+form{
+    border-bottom: 1px solid #414166;
+}
+
+.p1{
+    color: #0a2ff1;
+    font-family: 'Mulish', 'regular';
+    font-size: 12pt;
+    padding-left: 10px;
+}
+
+.p2{
+    color: #0a2ff1;
+    font-family: 'Mulish', 'regular';
+    font-size: 12pt;
+    padding-left: 250px;
+}
+
+div.botonera {
+  margin-top: 70px;
 }
