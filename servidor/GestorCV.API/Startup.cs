@@ -35,6 +35,12 @@ namespace GestorCV.API
 
             app.UseAuthorization();
 
+            app.UseCors(builder => builder
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowAnyOrigin()
+            );
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

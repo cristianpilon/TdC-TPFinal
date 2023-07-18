@@ -1,0 +1,1 @@
+export const mensajeErrorGeneral = 'Ha ocurrido un error al procesar la petición. Verifique que el aplicativo de servidor se encuentre en ejecución';

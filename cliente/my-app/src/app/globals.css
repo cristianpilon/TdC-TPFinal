@@ -31,6 +31,65 @@
     box-sizing: border-box;
 }
 
+body {
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    padding: 20px;
+    background-color: #f5f1f1;
+    padding: 0%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+header nav {
+    color: #5385cf;
+    padding: 0px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.boton {
+    background-color: rgb(50, 139, 190);
+    color: white;
+    width:150px;
+    height: 30px;
+    font-size: 20px;
+    margin-right: 150px;
+    border-radius: 20px;
+    border: #5385cf;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+header .Titulo1{
+    color: #2a4f86;
+    margin-right: 150px;
+    align-items: center;
+    font-weight: bold;
+    font-size: 30px;
+}
+
+header .Titulo2{
+    color: #162a49;
+    font-size: 40px;
+}
+
+header .detalle{
+    border: 1px solid bisque;
+    background-color: bisque;
+    width:50%;
+
+}
+
+header .botonPostular{
+    border: 1px solid #b7d0f7;
+    background-color:  #b7d0f7;
+}
+
 .imgDiv{
     border: 1px solid rgb(149, 191, 255);
     text-align: center;
@@ -55,16 +114,6 @@ label{
     font-weight: 700;
 }
 
-#log{
-    width:500px;
-    height: 50px;
-    margin-bottom: 10px;
-    padding: 10px;
-    /* border: 1px solid #414166; */
-    font-size: 20px;
-    font-weight: 400;
-    border-left: none;
-}
 
 .input1{
     display: flex;
@@ -111,13 +160,6 @@ label{
         vertical-align: top;
 }
 
-
-#log{
-    background-color: rgb(4, 4, 100);
-    color: white;
-    font-weight: 600;
-}
-
 form{
     border-bottom: 1px solid #414166;
 }
@@ -138,4 +180,101 @@ form{
 
 div.botonera {
   margin-top: 70px;
+}
+
+main {
+    padding: 10px 20px;
+    background-color: rgb(140, 181, 209);
+    border-bottom: 1px solid grey;
+}
+
+main h1 {
+    margin: 0;
+}
+
+.cuerpo {
+    margin: 0 40px;
+}
+
+.contenedor{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.col-50 {
+    width: 50%;
+    font-size: 20px;
+}
+
+#botonpost{
+    width:500px;
+    height: 50%;
+    margin-left: 30px;
+    padding: 50px;
+    font-size: 20px;
+    border-left: none;
+    background-color: rgb(4, 4, 100);
+    color: white;
+    font-weight: bold;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.etiquetas{
+    width: 60%;
+    margin: 10px 2px 14px 0;
+}
+
+.boton-postulacion{
+    background-color: b7d0f7;
+    width: 40%;
+    height: 100%;
+}
+
+.etiqueta {
+    position: relative;
+    background-color: rgb(33, 151, 241);
+    margin-right: 30px;
+    margin-top: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    font-size: 16px;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.etiqueta:after {
+    content: '\25ba';
+    background: none;
+    font-size: 26px;
+    padding: 0;
+    right: -23px;
+    top: -6px;
+    position: absolute;
+    color: rgb(33, 151, 241);
+}
+
+.detalle{
+    display: flex;
+    flex-direction: column;
+    background-color:#d7e4f8;
+    color: rgb(66, 141, 209);
+    flex: 1;
+    border: 1px solid #d7e4f8;
+    justify-content: space-between;
+}
+
+.detalle label{
+    color: rgb(66, 141, 209);
+    font-size: 20pt;
+}
+
+footer {
+    margin: 20px;
 }

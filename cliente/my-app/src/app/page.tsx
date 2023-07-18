@@ -1,25 +1,38 @@
 "use client";
 import { useState } from "react"
 import { useRouter } from 'next/navigation';
+import { mensajeErrorGeneral } from "@/constants";
 
 export default function Home() {
-  const [usuario, setUsuario] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const [usuario, setUsuario] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const { push } = useRouter();
-  const ingresarClick = () => {
-
-    if (password === '123456') {
-      if (usuario === 'usuarioAdmin') {
-        push('/empleos')
-        return;
-      }  
-    }
-    if (usuario === 'usuario' ) {
-        push('postulaciones')
-        return;
-    }
-
-    alert('El usuario o la contraseña es incorrecta');
+  const ingresarClick = async () => {
+    await fetch('http://localhost:4000/usuarios/validar', { 
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ usuario, password }),
+    }).then(async (data) => {
+      if (data.ok) {
+        const respuesta = await data.json();
+        if (respuesta.rol === 'Admin') {
+          push('postulaciones')
+        }
+        else {
+          push('empleos');
+        }
+      }
+      else if (data.status === 400) {
+        alert('El usuario o la contraseña es incorrecta');
+      }
+      else {
+        alert(mensajeErrorGeneral);
+      }
+    }).catch((error) => {
+      alert(error);
+    });
   }
 
   return (
@@ -53,8 +66,8 @@ export default function Home() {
             <label className="p1"><input type="checkbox" value=""/>Recordarme</label>
             <a className="p2" href="#">¿Olvidó contraseña?</a>
             <div className="botonera">
-              <input type="submit" id="log" value="Ingresar" onClick={ingresarClick} />
-              <input type="submit" id="log" value="Registrar" />
+              <input type="submit" className="boton" value="Ingresar" onClick={ingresarClick} />
+              <input type="submit" className="boton" value="Registrar" />
             </div>
           </form>
       </div>
