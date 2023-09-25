@@ -1,41 +1,57 @@
-﻿using System;
+﻿using GestorCV.API.Controllers.Servicios.Interfaces;
+using GestorCV.API.Infraestructura;
+using System.Collections.Generic;
 
 namespace GestorCV.API.Controllers.Servicios
 {
     public class ServicioUsuarios
     {
-        public class PeticionValidarUsuario
+        public class PeticionValidarUsuario : IPeticion
         {
-            public Resultado Procesar(Parametros parametros)
+            public Parametros ParametrosPeticion { get; set; }
+
+            public PeticionValidarUsuario(Parametros parametros)
             {
-                var resultado = new Resultado();
+                ParametrosPeticion = parametros;
+            }
 
-                if (parametros.Password != "123456")
-                {
-                    resultado.Validaciones.Add(new ResultadoBase.ResultadoValidacion
-                    {
-                        Mensaje = "El usuario o la contraseña es incorrecta"
-                    });
-
-                    return resultado;
-                }
-
-                if (parametros.Usuario != "usuario" && parametros.Usuario != "usuarioAdmin")
-                {
-                    resultado.Validaciones.Add(new ResultadoBase.ResultadoValidacion
-                    {
-                        Mensaje = "El usuario o la contraseña es incorrecta"
-                    });
-
-                    return resultado;
-                }
-
-                var tipoUsuario = parametros.Usuario == "usuarioAdmin" ? "Admin" : "Usuario";
+            public IResultado Procesar()
+            {
+                var tipoUsuario = ParametrosPeticion.Usuario == "usuarioAdmin" ? "Admin" : "Usuario";
 
                 return new Resultado { Rol = tipoUsuario };
             }
 
-            public class Resultado : ResultadoBase
+            public void Validar()
+            {
+                var validaciones = new List<ValidacionException.Validacion>();
+
+                if (ParametrosPeticion.Password != "123456")
+                {
+                    var validacion = new ValidacionException.Validacion
+                    {
+                        Mensaje = "El usuario o la contraseña es incorrecta",
+                    };
+
+                    validaciones.Add(validacion);
+
+                    throw new ValidacionException(validaciones);
+                }
+
+                if (ParametrosPeticion.Usuario != "usuario" && ParametrosPeticion.Usuario != "usuarioAdmin")
+                {
+                    var validacion = new ValidacionException.Validacion
+                    {
+                        Mensaje = "El usuario o la contraseña es incorrecta",
+                    };
+
+                    validaciones.Add(validacion);
+
+                    throw new ValidacionException(validaciones);
+                }
+            }
+
+            public class Resultado : IResultado
             {
                 public string Rol { get; set; }
             }

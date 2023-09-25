@@ -9,20 +9,22 @@ namespace GestorCV.API.Controllers
     [Route("[controller]")]
     public class UsuariosController : ControllerBase
     {
+        EjecutorPeticiones ejecutorPeticiones { get; set; }
+
+        public UsuariosController()
+        {
+            ejecutorPeticiones = new EjecutorPeticiones();    
+        }
+
         [HttpPost("validar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Validar(PeticionValidarUsuario.Parametros parametros)
         {
-            var peticion = new PeticionValidarUsuario();
-            var resultado = peticion.Procesar(parametros);
+            var peticion = new PeticionValidarUsuario(parametros);
+            var resultado = ejecutorPeticiones.Ejecutar(peticion);
 
-            if (resultado.Validaciones.Count > 0)
-            {
-                return BadRequest(resultado.Validaciones);
-            }
-
-            return Ok(new { resultado.Rol });
+            return Ok(resultado);
         }
     }
 }
