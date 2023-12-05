@@ -9,8 +9,8 @@ namespace GestorCV.API.Controllers.Servicios
             // Ejecuta las validaciones de la petición
             peticion.Validar();
 
-            // Procesa y devuelve el resultado de la petición
-            return peticion.Procesar();
+            // Procesa y retorna el resultado de la petición
+            return peticion.ProcesarExtendido();
         }
     }
 }

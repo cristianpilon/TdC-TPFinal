@@ -1,7 +1,7 @@
 ﻿using GestorCV.API.Controllers.Servicios;
+using GestorCV.API.Controllers.Servicios.Usuarios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static GestorCV.API.Controllers.Servicios.ServicioUsuarios;
 
 namespace GestorCV.API.Controllers
 {
@@ -9,20 +9,20 @@ namespace GestorCV.API.Controllers
     [Route("[controller]")]
     public class UsuariosController : ControllerBase
     {
-        EjecutorPeticiones ejecutorPeticiones { get; set; }
+        EjecutorPeticiones EjecutorPeticiones { get; set; }
 
         public UsuariosController()
         {
-            ejecutorPeticiones = new EjecutorPeticiones();    
+            EjecutorPeticiones = new EjecutorPeticiones();    
         }
 
         [HttpPost("validar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Validar(PeticionValidarUsuario.Parametros parametros)
+        public IActionResult Validar(ValidarUsuario.Parametros parametros)
         {
-            var peticion = new PeticionValidarUsuario(parametros);
-            var resultado = ejecutorPeticiones.Ejecutar(peticion);
+            var peticion = new ValidarUsuario(parametros);
+            var resultado = EjecutorPeticiones.Ejecutar(peticion);
 
             return Ok(resultado);
         }

@@ -1,48 +1,50 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System;
-using GestorCV.API.Infraestructura;
 using Newtonsoft.Json;
 using System.Net;
 
-public class ErrorHandlerMiddleware//ExceptionHandlerMiddleware
+namespace GestorCV.API.Infraestructura
 {
-    private readonly RequestDelegate _next;
-
-    public ErrorHandlerMiddleware(RequestDelegate next)
+    public class ErrorHandlerMiddleware
     {
-        _next = next;
-    }
+        private readonly RequestDelegate _next;
 
-    public async Task Invoke(HttpContext context)
-    {
-        try
+        public ErrorHandlerMiddleware(RequestDelegate next)
         {
-            await _next(context);
+            _next = next;
         }
-        catch (Exception error)
+
+        public async Task Invoke(HttpContext context)
         {
-            var response = context.Response;
-            response.ContentType = "application/json";
-            string bodyResponse;
-
-            switch (error)
+            try
             {
-                case ValidacionException e:
-                    // Errores de validacion
-                    response.StatusCode = (int)HttpStatusCode.BadRequest; // 400
-                    response.ContentType = "application/json";
-                    bodyResponse = JsonConvert.SerializeObject(new { e.Validaciones });
-
-                    break;
-                default:
-                    // unhandled error
-                    response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
-                    bodyResponse = "Ha ocurrido un error. Contacte al equipo técnico para más detalles";
-                    break;
+                await _next(context);
             }
+            catch (Exception error)
+            {
+                var response = context.Response;
+                response.ContentType = "application/json";
+                string bodyResponse;
 
-            await response.WriteAsync(bodyResponse);
+                switch (error)
+                {
+                    case ValidacionException e:
+                        // Errores de validacion
+                        response.StatusCode = (int)HttpStatusCode.BadRequest; // 400
+                        response.ContentType = "application/json";
+                        bodyResponse = JsonConvert.SerializeObject(new { e.Validaciones });
+
+                        break;
+                    default:
+                        // Errores no controlados
+                        response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
+                        bodyResponse = "Ha ocurrido un error. Contacte al equipo técnico para más detalles";
+                        break;
+                }
+
+                await response.WriteAsync(bodyResponse);
+            }
         }
     }
 }

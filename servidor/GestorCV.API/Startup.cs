@@ -1,8 +1,12 @@
+using GestorCV.API.Infraestructura;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace GestorCV.API
 {
@@ -11,6 +15,14 @@ namespace GestorCV.API
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            // Inicializa variables estáticos para configuraciones generales.
+            // NOTA: Esto podría generarse por medio del registro de servicios para inyección de dependencias
+            // nativo de NET Core pero perdería visibilidad y complejizaría el modelo para inyectar variables
+            // muy sencillas. Si bien esto se considera una mala práctica (los desarrolladores podrían acceder
+            // fácilmente a estos valores desde cualquier parte de la aplicación) la finalidad es no perder
+            // visibilidad de donde se guardan estos valores e inicializarlos solo al comienzo.
+            _ = new AppConfiguration(configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -21,6 +33,25 @@ namespace GestorCV.API
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
+            // Agrego configuracion para autorizar solo usuarios con token
+            var jwtIssuer = AppConfiguration.FirmaToken;
+            var jwtKey = AppConfiguration.ClaveToken;
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+             .AddJwtBearer(options =>
+             {
+                 options.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
+                     ValidateLifetime = true,
+                     ValidateIssuerSigningKey = true,
+                     ValidIssuer = jwtIssuer,
+                     ValidAudience = jwtIssuer,
+                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                 };
+             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +74,7 @@ namespace GestorCV.API
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseCors(builder => builder
