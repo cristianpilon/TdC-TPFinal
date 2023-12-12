@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestorCV.API", "GestorCV.API.csproj", "{32E798B6-BE66-4794-9E48-F2E2010D83A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GestorCV.API", "GestorCV.API.csproj", "{32E798B6-BE66-4794-9E48-F2E2010D83A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GestorCV.API.Test", "..\GestorCV.API.Test\GestorCV.API.Test.csproj", "{50B10F62-A29A-450D-9564-806A4AC6D21A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{32E798B6-BE66-4794-9E48-F2E2010D83A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32E798B6-BE66-4794-9E48-F2E2010D83A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32E798B6-BE66-4794-9E48-F2E2010D83A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50B10F62-A29A-450D-9564-806A4AC6D21A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50B10F62-A29A-450D-9564-806A4AC6D21A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50B10F62-A29A-450D-9564-806A4AC6D21A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50B10F62-A29A-450D-9564-806A4AC6D21A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

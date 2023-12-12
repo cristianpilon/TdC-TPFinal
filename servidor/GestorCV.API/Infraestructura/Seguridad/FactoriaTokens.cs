@@ -13,6 +13,7 @@ namespace GestorCV.API.Infraestructura.Seguridad
     /// </summary>
     public class FactoriaTokens
     {
+        public const string fixedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjYiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUGF1bGEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zdXJuYW1lIjoiRmVybmFuZGV6IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2F1dGhvcml6YXRpb25kZWNpc2lvbiI6IltdIiwiZXhwIjoxNzA1MDk1MjAwLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQwMDAvIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwLyJ9.ArqB-IsZKMXmcdMlclBNLaQDhvXlWIr5dYJU2CNlyE4";
         /// <summary>
         /// Crea token de usuario a partir de un modelo de usuario (info de usuario y permisos de cliente).
         /// </summary>
@@ -31,7 +32,8 @@ namespace GestorCV.API.Infraestructura.Seguridad
                 new Claim(ClaimTypes.AuthorizationDecision, JsonConvert.SerializeObject(usuario.ObtenerPermisosFrontend())),
             };
 
-            var Sectoken = new JwtSecurityToken(AppConfiguration.ClaveToken,
+            var Sectoken = new JwtSecurityToken(
+              AppConfiguration.FirmaToken,
               AppConfiguration.FirmaToken,
               claims,
               expires: DateTime.Now.AddMonths(1),

@@ -19,7 +19,7 @@ namespace GestorCV.API.Infraestructura
 
         public class Validacion
         {
-            public Validacion(string mensaje, string campo)
+            public Validacion(string mensaje, string campo = "")
             {
                 Mensaje = mensaje;
                 Campo = campo;

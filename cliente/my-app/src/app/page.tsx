@@ -1,7 +1,12 @@
 "use client";
 import { useState } from "react"
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
 import { mensajeErrorGeneral } from "@/constants";
+import imgLogin from "../../public/home/user.png"
+import imgUser from "../../public/home/17004.png"
+import imgPassword from "../../public/home/security-system.png"
+import { guardarTokenSesion, guardarRolUsuario } from "@/componentes/compartido";
 
 export default function Home() {
   const [usuario, setUsuario] = useState<string>('');
@@ -17,19 +22,26 @@ export default function Home() {
     }).then(async (data) => {
       if (data.ok) {
         const respuesta = await data.json();
-        if (respuesta.rol === 'Admin') {
-          push('postulaciones')
+        console.log(respuesta);
+        debugger;
+        guardarTokenSesion(respuesta.token);
+        guardarRolUsuario(respuesta.rol);
+
+        if (respuesta.rol === 'Administrador' || respuesta.rol === 'Reclutador') {
+          push('/postulaciones');
         }
         else {
-          push('empleos');
+          push('/empleos');
         }
+        return;
       }
       else if (data.status === 400) {
         alert('El usuario o la contraseña es incorrecta');
+        return;
       }
-      else {
-        alert(mensajeErrorGeneral);
-      }
+        
+      alert(mensajeErrorGeneral);
+
     }).catch((error) => {
       alert(error);
     });
@@ -40,10 +52,10 @@ export default function Home() {
       <div className="imgDiv"> 
           <label>Gestión de currículums</label> 
           <form action="" method="post">
-            <img className="imgLogin" src="home/user.png" alt="" />
+            <Image className="imgLogin" src={imgLogin} fill={false} alt="" />
             <div className="input1">
                 <div className="Username">
-                    <img className="imgUser" src="home/17004.png" alt="" />
+                    <Image className="imgUser" src={imgUser} fill={false} alt="" />
                     <input 
                         type="text" 
                         id="user" 
@@ -55,7 +67,7 @@ export default function Home() {
 
             <div className="input2">
                 <div className="Username">
-                    <img className="imgUser" src="home/security-system.png" alt="" />
+                    <Image className="imgUser" src={imgPassword} fill={false} alt="" />
                     <input type="password"
                         id="psw" 
                         name="psw" 

@@ -37,19 +37,12 @@ namespace GestorCV.API.Models.Dtos
         /// <returns>La acción que realiza el verbo de la operación: Escritura/Lectura.</returns>
         private static string ConvertirVerboEnAccion(string verboOperacion)
         {
-            switch (verboOperacion.ToUpperInvariant())
+            return verboOperacion.ToUpperInvariant() switch
             {
-                case "GET":
-                case "OPTION":
-                    return PermisoDeLectura;
-                case "POST":
-                case "DELETE":
-                case "PATCH":
-                case "PUT":
-                    return PermisoDeEscritura;
-                default:
-                    throw new System.ArgumentException("El verbo de la petición no es válido");
-            }
+                "GET" or "OPTION" => PermisoDeLectura,
+                "POST" or "DELETE" or "PATCH" or "PUT" => PermisoDeEscritura,
+                _ => throw new System.ArgumentException("El verbo de la petición no es válido"),
+            };
         }
     }
 }

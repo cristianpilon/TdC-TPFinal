@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using GestorCV.API.Infraestructura;
+﻿using GestorCV.API.Infraestructura;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestorCV.API.Models;

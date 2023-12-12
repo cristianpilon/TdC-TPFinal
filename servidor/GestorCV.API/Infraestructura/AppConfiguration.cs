@@ -22,9 +22,12 @@ namespace GestorCV.API.Infraestructura
         public static string SmtpHost => _config.GetSection("CorreoSMTP:Host").Get<string>();
 
         public static string SmtpPuerto => _config.GetSection("CorreoSMTP:Puerto").Get<string>();
+        
+        public static string SmtpCorreoOrigen => _config.GetSection("CorreoSMTP:CorreoOrigen").Get<string>();
 
         public static string SmtpUsuario => _config.GetSection("CorreoSMTP:Usuario").Get<string>();
 
         public static string SmtpPassword => _config.GetSection("CorreoSMTP:Password").Get<string>();
+
     }
 }

@@ -1,10 +1,16 @@
 ﻿using GestorCV.API.Models.Dtos;
 using GestorCV.API.Repositorios.Base;
+using GestorCV.API.Repositorios.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GestorCV.API.Repositorios
 {
+    public interface IRepositorioFormularios : IRepositorio
+    {
+        public List<RutaFormulario> ObtenerRutas(int id);
+    }
+
     /// <summary>
     /// Repositorio de formularios.
     /// </summary>

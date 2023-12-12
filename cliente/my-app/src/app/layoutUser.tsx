@@ -25,7 +25,7 @@ export default function Layout({ children, userLayout }: {
         </nav>
       </header>
       <main>{children}</main>
-      <footer>&copy; Cristian Pilon - Paula Fernandez. TP Trabajo de Campo - Pablo Audoglio</footer>
+      <footer>&copy; Cristian Pilon - Paula Fernandez. TP Trabajo de Campo/Diploma - Pablo Audoglio</footer>
     </>
   );
 }

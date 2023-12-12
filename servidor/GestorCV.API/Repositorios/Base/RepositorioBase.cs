@@ -15,7 +15,7 @@ namespace GestorCV.API.Repositorios.Base
 
         public void AnularTransaccion()
         {
-            throw new System.NotImplementedException();
+
         }
 
         public void ConfirmarTransaccion() 

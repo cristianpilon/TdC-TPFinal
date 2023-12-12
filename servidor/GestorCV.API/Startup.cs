@@ -1,4 +1,5 @@
 using GestorCV.API.Infraestructura;
+using GestorCV.API.Infraestructura.Seguridad;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -32,7 +33,14 @@ namespace GestorCV.API
         {
             services.AddControllers();
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+                options.CustomSchemaIds(type => type.ToString());
+            });
+            services.AddControllersWithViews(options =>
+            {
+                options.AllowEmptyInputInBodyModelBinding = true;
+            });
 
             // Agrego configuracion para autorizar solo usuarios con token
             var jwtIssuer = AppConfiguration.FirmaToken;
@@ -70,9 +78,10 @@ namespace GestorCV.API
 
             app.UseHttpsRedirection();
 
-            app.UseMiddleware<ErrorHandlerMiddleware>();
-
             app.UseRouting();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>()
+                .UseMiddleware<AutorizacionMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();

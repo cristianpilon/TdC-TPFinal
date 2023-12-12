@@ -1,8 +1,8 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -27,11 +27,13 @@
 } */
 
 @import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;700&display=swap');
+
 *{
     box-sizing: border-box;
 }
 
 body {
+    background-color: rgb(140, 181, 209);
     padding: 0;
     margin: 0;
 }
@@ -76,6 +78,7 @@ header .Titulo1{
 header .Titulo2{
     color: #162a49;
     font-size: 40px;
+    margin-bottom: 20px;
 }
 
 header .detalle{
@@ -100,11 +103,14 @@ header .botonPostular{
     max-width: 800px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     margin: 0 auto;
 }
 
 .imgLogin{
     width: 200px;
+    height: auto;
+    display: inline;
 }
 
 label{
@@ -127,6 +133,7 @@ label{
         width: 47px;
         height: 47px;
         margin-left: 2px;
+        display: inline;
     }
 
 .Username{
@@ -165,27 +172,29 @@ form{
 }
 
 .p1{
-    color: #0a2ff1;
+    color: #662938;
     font-family: 'Mulish', 'regular';
     font-size: 12pt;
-    padding-left: 10px;
+    margin-left: 10px;
+    background-color: white;
 }
 
 .p2{
-    color: #0a2ff1;
+    color: #662938;
     font-family: 'Mulish', 'regular';
     font-size: 12pt;
-    padding-left: 250px;
+    margin-left: 250px;
+    background-color: white;
 }
 
 div.botonera {
-  margin-top: 70px;
+    margin-top: 50px;
+    margin-bottom: 20px;
 }
 
 main {
     padding: 10px 20px;
     background-color: rgb(140, 181, 209);
-    border-bottom: 1px solid grey;
 }
 
 main h1 {
@@ -252,10 +261,10 @@ main h1 {
 .etiqueta:after {
     content: '\25ba';
     background: none;
-    font-size: 26px;
+    font-size: 33px;
     padding: 0;
-    right: -23px;
-    top: -6px;
+    right: -28px;
+    top: -12px;
     position: absolute;
     color: rgb(33, 151, 241);
 }
@@ -274,6 +283,28 @@ main h1 {
     color: rgb(66, 141, 209);
     font-size: 20pt;
 }
+
+.Descripcion {
+    margin-top: 20px;
+}
+
+.spinner {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.boton-volver {
+    margin-top: 10px;
+}
+
+.botonera-empleos {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 0;
+}
+
 
 footer {
     margin: 20px;

@@ -1,16 +1,24 @@
 ﻿using GestorCV.API.Infraestructura.Seguridad;
 using GestorCV.API.Models.Dtos;
 using GestorCV.API.Repositorios.Base;
+using GestorCV.API.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GestorCV.API.Repositorios
 {
+    public interface IRepositorioUsuarios : IRepositorio
+    {
+        public Models.Dtos.Usuario Autenticar(string nombreUsuario, string password);
+
+        public Models.Dtos.Usuario ObtenerConAccesos(int idUsuario);
+    }
+
     /// <summary>
     /// Repositorio de usuarios
     /// </summary>
-    public sealed class RepositorioUsuarios : RepositorioBase
+    public sealed class RepositorioUsuarios : RepositorioBase, IRepositorioUsuarios
     {
         /// <summary>
         /// Devuelve el usuario que coincida con el nombre de usuario y contraseña provistos.
@@ -66,7 +74,7 @@ namespace GestorCV.API.Repositorios
 
             var rol = CrearDtoRol(usuario.IdRolNavigation);
 
-            return new Models.Dtos.Usuario(usuario.Id, rol, accesos);
+            return new Models.Dtos.Usuario(usuario.Id, usuario.Nombre, usuario.Apellido, usuario.Correo, rol, accesos);
         }
 
         /// <summary>

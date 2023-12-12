@@ -6,7 +6,7 @@ namespace GestorCV.API.Infraestructura
 {
     public sealed class ServicioCorreo
     {
-        private static readonly ServicioCorreo _instancia = new ServicioCorreo();
+        private static readonly ServicioCorreo _instancia = new();
 
         private ServicioCorreo()
         {

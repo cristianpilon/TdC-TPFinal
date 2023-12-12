@@ -6,6 +6,12 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Net;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System;
+using Azure;
+using Newtonsoft.Json;
 
 namespace GestorCV.API.Infraestructura.Seguridad
 {
@@ -23,15 +29,32 @@ namespace GestorCV.API.Infraestructura.Seguridad
         public async Task Invoke(HttpContext context)
         {
             // Si el token de autonizacion existe, valido los permisos para el usuario
-            if (context.Request.Headers["Autorizacion"].Count > 0)
+            if (context.Request.Headers["Autorization"].Count > 0)
             {
-                var ruta = context.Request.RouteValues["controller"].ToString() + "/" + context.Request.RouteValues["action"].ToString();
+                var controllerActionDescriptor = context
+                    .GetEndpoint()
+                    .Metadata
+                    .GetMetadata<ControllerActionDescriptor>();
+
+                var controllerName = controllerActionDescriptor.ControllerName;
+                var actionName = controllerActionDescriptor.ActionName;
+
+                var ruta = controllerName + "/" + actionName;
                 var verboOperacion = context.Request.Method;
 
-                var tokenAutotizacion = context.Request.Headers["Autorizacion"].ToString();
-                if (!UsuarioAutorizado(tokenAutotizacion, ruta, verboOperacion))
+                var tokenNoSanitizado = context.Request.Headers["Authorization"].ToString();
+                var tokenAutorizacion = AuthenticationHeaderValue.Parse(tokenNoSanitizado).Parameter.Trim('"');
+                if (!UsuarioAutorizado(tokenAutorizacion, ruta, verboOperacion))
                 {
-                    DenegarAcceso(context);
+                    var response = context.Response;
+                    response.ContentType = "application/json";
+
+                    response.StatusCode = (int)HttpStatusCode.Unauthorized; // 401
+                    response.ContentType = "application/json";
+                    var bodyResponse = JsonConvert.SerializeObject(new { Mensaje = "Operación o usuario no autorizado. Contacte al equipo técnico para más detalles." });
+                    await response.WriteAsync(bodyResponse);
+
+                    return;
                 }
             }
 
@@ -107,15 +130,9 @@ namespace GestorCV.API.Infraestructura.Seguridad
         /// Devuelve una respuesta de acceso denegado en la peticion (Error 401)
         /// </summary>
         /// <param name="context">Contexto de la peticion</param>
-        public async void DenegarAcceso(HttpContext context)
+        public void DenegarAcceso(HttpContext context)
         {
-            var response = context.Response;
-            response.ContentType = "application/json";
-            response.StatusCode = (int)HttpStatusCode.Unauthorized; // 401
-
-            string bodyResponse = "Operación o usuario no autorizado. Contacte al equipo técnico para más detalles.";
-
-            await response.WriteAsync(bodyResponse);
+            throw new UnauthorizedAccessException();
         }
     }
 }

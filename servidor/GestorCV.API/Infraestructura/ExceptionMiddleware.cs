@@ -36,10 +36,18 @@ namespace GestorCV.API.Infraestructura
                         bodyResponse = JsonConvert.SerializeObject(new { e.Validaciones });
 
                         break;
+                    case UnauthorizedAccessException:
+                        // Errores de validacion
+                        response.StatusCode = (int)HttpStatusCode.Unauthorized; // 401
+                        response.ContentType = "application/json";
+                        bodyResponse = JsonConvert.SerializeObject(new { Mensaje = "Operación o usuario no autorizado. Contacte al equipo técnico para más detalles." });
+
+                        break;
                     default:
                         // Errores no controlados
                         response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
-                        bodyResponse = "Ha ocurrido un error. Contacte al equipo técnico para más detalles";
+                        response.ContentType = "application/json";
+                        bodyResponse = JsonConvert.SerializeObject(new { Mensaje = "Ha ocurrido un error. Contacte al equipo técnico para más detalles" });
                         break;
                 }
 

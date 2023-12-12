@@ -1,17 +1,20 @@
 ﻿using GestorCV.API.Controllers.Servicios.Interfaces;
 using GestorCV.API.Repositorios.Interfaces;
 
-namespace GestorCV.API.Controllers.Servicios.Base
+namespace GestorCV.API.Controllers.Base
 {
     public abstract class PeticionTransaccionableBase : PeticionBase
     {
-        public override IResultado ProcesarExtendido() 
+        public PeticionTransaccionableBase(IRepositorio repositorio)
+            : base(repositorio) { }
+
+        public override IResultado ProcesarExtendido()
         {
+            Repositorio.IniciarTransaccion();
+            
             try
             {
-                Repositorio.IniciarTransaccion();
-                
-                var resultado = base.Procesar();
+                var resultado = Procesar();
 
                 Repositorio.ConfirmarTransaccion();
 

@@ -1,15 +1,21 @@
 ﻿using GestorCV.API.Models.Dtos;
 using GestorCV.API.Repositorios.Base;
+using GestorCV.API.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace GestorCV.API.Repositorios
 {
+    public interface IRepositorioGrupos : IRepositorio
+    {
+        public List<Permiso> ObtenerPermisos(int id);
+    }
+
     /// <summary>
     /// Repositorio de grupos.
     /// </summary>
-    public sealed class RepositorioGrupos : RepositorioBase
+    public sealed class RepositorioGrupos : RepositorioBase, IRepositorioGrupos
     {
         /// <summary>
         /// Obtiene los permisos asociados al grupo.
