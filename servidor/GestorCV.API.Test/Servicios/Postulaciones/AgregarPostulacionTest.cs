@@ -45,11 +45,7 @@ namespace GestorCV.API.Test.Servicios.Postulaciones
             var idEmpleo = 2;
             var idNuevaPostulacion = 3;
 
-            var parametros = new PeticionAgregar.Parametros { 
-                IdEmpleo = idEmpleo, 
-                IdUsuario = idUsuario, 
-                CorreoUsuario = "lautaro.avecilla@uai.edu.ar" 
-            };
+            var parametros = new PeticionAgregar.Parametros(idEmpleo, idUsuario, "lautaro.avecilla@uai.edu.ar");
 
             // Preparo respuesta de repositorio y métodos de transacciones
             repositorioPostulacionesMock.Setup(r => r.Agregar(It.IsAny<Models.Dtos.Postulacion>()))
@@ -86,11 +82,7 @@ namespace GestorCV.API.Test.Servicios.Postulaciones
             var idUsuario = 0;
             var idEmpleo = 2;
 
-            var parametros = new PeticionAgregar.Parametros { 
-                IdEmpleo = idEmpleo, 
-                IdUsuario = idUsuario, 
-                CorreoUsuario = "lautaro.avecilla@uai.edu.ar" 
-            };
+            var parametros = new PeticionAgregar.Parametros(idEmpleo, idUsuario, "lautaro.avecilla@uai.edu.ar" );
 
             // Preparo repositorio para verificar
             repositorioPostulacionesMock.Setup(r => r.Agregar(It.IsAny<Models.Dtos.Postulacion>()));
@@ -117,11 +109,7 @@ namespace GestorCV.API.Test.Servicios.Postulaciones
             // Envío empleo no valido
             var idEmpleo = 0;
 
-            var parametros = new PeticionAgregar.Parametros { 
-                IdEmpleo = idEmpleo, 
-                IdUsuario = idUsuario, 
-                CorreoUsuario = "lautaro.avecilla@uai.edu.ar" 
-            };
+            var parametros = new PeticionAgregar.Parametros(idEmpleo, idUsuario, "lautaro.avecilla@uai.edu.ar");
 
             // Preparo repositorio para verificar
             repositorioPostulacionesMock.Setup(r => r.Agregar(It.IsAny<Models.Dtos.Postulacion>()));

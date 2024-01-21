@@ -7,15 +7,13 @@ using GestorCV.API.Repositorios;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Microsoft.AspNetCore.Http;
-using System.Net.Http.Headers;
 using GestorCV.API.Infraestructura.Seguridad;
 
 namespace GestorCV.API.Controllers.Base
 {
     public class AppController : ControllerBase
     {
-        public Models.Dtos.Usuario ObtenerUsuarioToken()
+        protected Models.Dtos.Usuario ObtenerUsuarioToken()
         {
             //var tokenNoSanitizado = HttpContext.Request.Headers["Authorization"].ToString();
             string token = FactoriaTokens.fixedToken;
