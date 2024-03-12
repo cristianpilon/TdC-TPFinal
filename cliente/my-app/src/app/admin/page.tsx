@@ -158,6 +158,14 @@ export default function Admin() {
               Buscar
             </button>
           </div>
+          <div className="relative h-9 basis-1/2 flex justify-end">
+            <button
+              className="ml-0 boton text-white font-bold py-2 px-4"
+              onClick={clickBuscar}
+            >
+              Postulaciones
+            </button>
+          </div>
         </div>
         <div className="uai-shadow p-2 my-4">
           <h2 className="font-bold mb-2 inline">Empleos</h2>
@@ -218,10 +226,10 @@ export default function Admin() {
                         key={index}
                         className="bg-white dark:bg-white dark:border-gray-700"
                       >
-                        <td className="px-6 py-4 flex">{x.empresa}</td>
+                        <td className="px-6 py-4">{x.empresa}</td>
                         <td className="px-6 py-4">{x.titulo}</td>
-                        <td className="px-6 py-4 flex">{x.fechaPublicacion}</td>
-                        <td className="px-6 py-4 flex">{x.ubicacion}</td>
+                        <td className="px-6 py-4">{x.fechaPublicacion}</td>
+                        <td className="px-6 py-4">{x.ubicacion}</td>
 
                         <td className="px-6 py-4">
                           <button
@@ -258,7 +266,7 @@ export default function Admin() {
                   })}
                 {!empleos && (
                   <tr className="bg-white border-b dark:bg-white dark:border-gray-700">
-                    <td colSpan={3}>
+                    <td colSpan={5}>
                       <Spinner />
                     </td>
                   </tr>

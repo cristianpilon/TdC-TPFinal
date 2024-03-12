@@ -1,5 +1,4 @@
-﻿using GestorCV.API.Controllers.Base;
-using GestorCV.API.Controllers.Servicios;
+﻿using GestorCV.API.Controllers.Servicios;
 using GestorCV.API.Repositorios;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -20,9 +19,24 @@ namespace GestorCV.API.Infraestructura.Seguridad
 
         public async Task Invoke(HttpContext contexto)
         {
+            // Registro la auditoría pero no la espero
+            // Dejo que corra en segundo plano
+            _ = RegistrarAuditoría(contexto);
+
+            await _next(contexto);
+        }
+
+        private async Task RegistrarAuditoría(HttpContext contexto)
+        {
             try
             {
                 var request = contexto.Request;
+
+                // Ignoro los verbos OPTIONS y TRACE ya que son informativos
+                if (request.Method == "OPTIONS" || request.Method == "TRACE")
+                {
+                    await _next(contexto);
+                }
 
                 string cuerpoMensage = string.Empty;
                 string parametrosQuery = $"(Parámetros query: {request.QueryString})";
@@ -56,13 +70,11 @@ namespace GestorCV.API.Infraestructura.Seguridad
                 var ejecutorPeticiones = new EjecutorPeticiones();
                 ejecutorPeticiones.Ejecutar(peticion);
             }
-            catch(Exception error)
+            catch (Exception error)
             {
                 // Error al intentar auditar. Lo escribo en el log.
                 Logger.LogException(error);
             }
-
-            await _next(contexto);
         }
     }
 }

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Layout from "../layoutUser";
 import { fetchPrivado, formatearFecha } from "@/componentes/compartido";
 import Modal from "@/componentes/compartido/modal";
@@ -7,6 +8,7 @@ import { mensajeErrorGeneral } from "@/constants";
 import Spinner from "@/componentes/compartido/spinner";
 
 export default function AuditoriaPostulaciones() {
+  const { push } = useRouter();
   const [mensajeModal, setMensajeModal] = useState<string>();
   const [tituloModal, setTituloModal] = useState<string>("");
   const [auditorias, setAuditorias] = useState<
@@ -58,6 +60,10 @@ export default function AuditoriaPostulaciones() {
         setTituloModal("Error");
         setMensajeModal(error);
       });
+  };
+
+  const backButtonClick = async () => {
+    push("/empleos");
   };
 
   const limpiarModal = () => setMensajeModal(undefined);
@@ -116,6 +122,11 @@ export default function AuditoriaPostulaciones() {
               </tbody>
             </table>
           </div>
+        </div>
+        <div className="flex mt-2">
+          <button onClick={backButtonClick} type="button" className="boton">
+            Volver
+          </button>
         </div>
         {mensajeModal && (
           <Modal

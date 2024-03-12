@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { mensajeErrorGeneral } from "@/constants";
@@ -9,6 +9,8 @@ import imgPassword from "../../public/home/security-system.png";
 import {
   guardarTokenSesion,
   guardarRolUsuario,
+  obtenerTokenSesion,
+  obtenerRolUsuario,
 } from "@/componentes/compartido";
 
 export default function Home() {
@@ -19,6 +21,21 @@ export default function Home() {
     useState<boolean>(false);
 
   const { push } = useRouter();
+
+  useEffect(() => {
+    const token = obtenerTokenSesion();
+
+    if (token) {
+      const rol = obtenerRolUsuario();
+      if (rol === "Administrador" || rol === "Reclutador") {
+        push("/admin");
+      } else {
+        push("/empleos");
+      }
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const ingresarClick = async () => {
     setAccionesDeshabilitadas(true);
@@ -39,7 +56,7 @@ export default function Home() {
             respuesta.rol === "Administrador" ||
             respuesta.rol === "Reclutador"
           ) {
-            push("/postulaciones");
+            push("/admin");
           } else {
             push("/empleos");
           }
@@ -51,6 +68,7 @@ export default function Home() {
         }
 
         setMensajeError(mensajeErrorGeneral);
+        setAccionesDeshabilitadas(false);
       })
       .catch(() => {
         setMensajeError(mensajeErrorGeneral);

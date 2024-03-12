@@ -5,6 +5,7 @@ using GestorCV.API.Infraestructura.Seguridad;
 using GestorCV.API.Repositorios;
 using GestorCV.API.Repositorios.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GestorCV.API.Controllers.Servicios.Usuarios
 {
@@ -21,7 +22,7 @@ namespace GestorCV.API.Controllers.Servicios.Usuarios
         public override IResultado Procesar()
         {
             var usuario = ((IRepositorioUsuarios)Repositorio).Autenticar(ParametrosPeticion.Usuario, ParametrosPeticion.Password);
-
+            
             if (usuario == null)
             {
                 ValidacionException.LanzarValidacionSimple("El usuario o la contraseña es incorrecta");

@@ -15,6 +15,11 @@ export const guardarRolUsuario = (rol: string) => {
   return sessionStorage.setItem("rolUsuario", rol);
 };
 
+export const eliminarSesionStorage = () => {
+  sessionStorage.removeItem("rolUsuario");
+  sessionStorage.removeItem("token");
+};
+
 export const fetchPrivado = (
   url: string,
   metodo: string,
