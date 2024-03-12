@@ -3,11 +3,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Layout from "../../layoutUser";
 import { mensajeErrorGeneral } from "@/constants";
-import { fetchPrivado, obtenerTokenSesion } from "@/componentes/compartido";
+import { fetchPrivado } from "@/componentes/compartido";
+import Modal from "@/componentes/compartido/modal";
 
 export default function Empleo({ params }: { params: { id: string } }) {
   const { push } = useRouter();
 
+  const [mensajeModal, setMensajeModal] = useState<string>();
+  const [tituloModal, setTituloModal] = useState<string>("");
   const [empleo, setEmpleo] = useState<{
     id: string;
     titulo: string;
@@ -37,10 +40,12 @@ export default function Empleo({ params }: { params: { id: string } }) {
             return;
           }
 
-          alert(mensajeErrorGeneral);
+          setTituloModal("Error");
+          setMensajeModal(mensajeErrorGeneral);
         })
-        .catch((error) => {
-          alert(error);
+        .catch(() => {
+          setTituloModal("Error");
+          setMensajeModal(mensajeErrorGeneral);
         });
     };
 
@@ -54,29 +59,38 @@ export default function Empleo({ params }: { params: { id: string } }) {
     )
       .then(async (data) => {
         if (data.ok) {
-          alert(
+          setTituloModal("Postulación");
+          setMensajeModal(
             "Se ha postulado correctamente a la posición. Se ha enviado un correo de confirmación.\nEn breve recibirá novedades respecto al progreso de su postulación."
           );
+
           return;
         } else if (data.status === 400) {
           const respuesta = await data.json();
-          respuesta.Validaciones.forEach((validacion: any) => {
-            alert(validacion.Mensaje);
-          });
+          const validaciones = respuesta.Validaciones.map(
+            (validacion: { Mensaje: string }) => validacion.Mensaje
+          ).join("\r\n");
+
+          setTituloModal("Error");
+          setMensajeModal(validaciones);
 
           return;
         }
 
-        alert(mensajeErrorGeneral);
+        setTituloModal("Error");
+        setMensajeModal(mensajeErrorGeneral);
       })
       .catch((error) => {
-        alert(error);
+        setTituloModal("Error");
+        setMensajeModal(error);
       });
   };
 
   const backButtonClick = async () => {
     push("/empleos");
   };
+
+  const limpiarModal = () => setMensajeModal(undefined);
 
   return (
     <Layout userLayout={true}>
@@ -194,6 +208,15 @@ export default function Empleo({ params }: { params: { id: string } }) {
           Volver
         </button>
       </div>
+      {mensajeModal && (
+        <Modal
+          mostrar={!!mensajeModal}
+          titulo={tituloModal}
+          onCambiarModal={limpiarModal}
+        >
+          <p>{mensajeModal}</p>
+        </Modal>
+      )}
     </Layout>
   );
 }

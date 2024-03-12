@@ -18,7 +18,7 @@ namespace GestorCV.API.Controllers.Servicios.Reportes
 
         public override IResultado Procesar()
         {
-            var empleos = ((IRepositorioEmpleos)Repositorio).ObtenerTodos();
+            var empleos = ((IRepositorioEmpleos)Repositorio).ObtenerTodos(ParametrosPeticion.Criterio);
             var nombreArchivo = FactoriaReporteEmpleos.Crear(empleos, ParametrosPeticion.Usuario);
 
             return new Resultado { Archivo = nombreArchivo };
@@ -26,10 +26,13 @@ namespace GestorCV.API.Controllers.Servicios.Reportes
 
         public class Parametros
         {
-            public Parametros(string usuario)
+            public Parametros(string usuario, string criterio)
             {
                 Usuario = usuario;
+                Criterio = criterio;
             }
+
+            public string Criterio { get; private set; }
 
             public string Usuario { get; private set; }
         }

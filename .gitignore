@@ -436,3 +436,5 @@ cliente/my-app/packages/react-devtools-extensions/.tempUserDataDir
 cliente/my-app/packages/react-devtools-inline/dist
 cliente/my-app/packages/react-devtools-shell/dist
 cliente/my-app/packages/react-devtools-timeline/dist
+
+*.pdf

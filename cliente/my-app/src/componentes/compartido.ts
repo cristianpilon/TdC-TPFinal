@@ -33,3 +33,21 @@ export const fetchPrivado = (
     body: cuerpo ? cuerpo : undefined,
   });
 };
+
+export const formatearFecha = (fecha: Date, incluirHora: boolean = false) => {
+  fecha = new Date(fecha);
+  const yyyy = fecha.getFullYear();
+  let mm: number | string = fecha.getMonth() + 1;
+  let dd: number | string = fecha.getDate();
+
+  if (dd < 10) dd = "0" + dd;
+  if (mm < 10) mm = "0" + mm;
+
+  let hora: string = "";
+
+  if (incluirHora) {
+    hora += " " + fecha.toTimeString().split(" ")[0];
+  }
+
+  return dd + "/" + mm + "/" + yyyy + hora;
+};

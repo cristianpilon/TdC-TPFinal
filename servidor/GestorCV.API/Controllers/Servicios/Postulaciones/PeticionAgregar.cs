@@ -3,7 +3,6 @@ using GestorCV.API.Controllers.Servicios.Interfaces;
 using GestorCV.API.Infraestructura;
 using GestorCV.API.Repositorios;
 using GestorCV.API.Repositorios.Interfaces;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using System.Collections.Generic;
 
 namespace GestorCV.API.Controllers.Servicios.Postulaciones

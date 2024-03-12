@@ -12,6 +12,24 @@
     0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
+.text-right {
+  text-align: right;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
 #login-back {
   background: url("../../public/home/back.jpg");
   width: 100%;
@@ -118,7 +136,6 @@ header nav {
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1;
-  margin: 0;
   max-width: 100%;
   min-width: 5.5rem;
   padding: 0.6875rem 1rem;
@@ -235,6 +252,29 @@ header .botonPostular {
   font-weight: 400;
   border: 0;
   vertical-align: top;
+}
+
+#busqueda-empleos-sugeridos .entrada-empleo .boton {
+  background-color: white;
+}
+
+#busqueda-empleos-sugeridos .entrada-empleo .boton.btn-primary {
+  background-color: #662938;
+}
+
+/* El primer empleo sugerido con fondo dorado */
+#busqueda-empleos-sugeridos .entrada-empleo:nth-child(2) {
+  background-color: #d8ba6f;
+}
+
+/* El segundo empleo sugerido con fondo plateado */
+#busqueda-empleos-sugeridos .entrada-empleo:nth-child(3) {
+  background-color: silver;
+}
+
+/* El segundo empleo sugerido con fondo bronce */
+#busqueda-empleos-sugeridos .entrada-empleo:nth-child(4) {
+  background-color: #bf8970;
 }
 
 .input2 {
@@ -402,22 +442,32 @@ main h1 {
   justify-content: center;
 }
 
+.entrada-empleo-logo {
+  width: 100px;
+}
+
+.entrada-empleo-detalle a:hover,
+.entrada-empleo-detalle a:active {
+  text-decoration: underline;
+}
+
 .botonera-empleos {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
-  margin: 0;
 }
 
 .botonera-empleos h1 {
   font-weight: bold;
 }
 
+.contenedor-reporte .modal-size {
+  width: 1000px;
+}
+
 footer {
-  margin-top: auto;
-  padding: 10px 20px;
-  font-size: 80%;
+  padding: 10px 60px;
   font-weight: 400;
+  z-index: 10;
 }

@@ -17,7 +17,9 @@ export default function Home() {
   const [mensajeError, setMensajeError] = useState<string>("");
   const [accionesDeshabilitadas, setAccionesDeshabilitadas] =
     useState<boolean>(false);
+
   const { push } = useRouter();
+
   const ingresarClick = async () => {
     setAccionesDeshabilitadas(true);
     await fetch("http://localhost:4000/usuarios/validar", {
@@ -83,7 +85,7 @@ export default function Home() {
                   {mensajeError}
                 </span>
                 <span
-                  className="absolute top-0 bottom-0 right-0 px-4 py-3"
+                  className="absolute top-0 bottom-0 right-0 px-2 py-3"
                   onClick={() => {
                     setMensajeError("");
                   }}

@@ -1,6 +1,7 @@
-﻿using ChartJSCore.Models;
+﻿using ImageChartsLib;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -24,13 +25,13 @@ namespace GestorCV.API.Controllers.Servicios.Reportes.Factoria
             var doc = new iTextSharp.text.Document();
             var nombreArchivo = $"{usuario} - Listado empleos.pdf";
             PdfWriter.GetInstance(doc, new FileStream(nombreArchivo, FileMode.Create));
-            
+
             // Abrir el documento
             doc.Open();
 
             // Creamos un titulo personalizado con tamaño de fuente 18 y color Azul
             var title = new Paragraph();
-            title.Font = FontFactory.GetFont(FontFactory.TIMES, 18f, new BaseColor(42,79, 134));
+            title.Font = FontFactory.GetFont(FontFactory.TIMES, 18f, new BaseColor(42, 79, 134));
             title.Add("Listado de empleos");
 
             doc.Add(title);
@@ -39,12 +40,13 @@ namespace GestorCV.API.Controllers.Servicios.Reportes.Factoria
             doc.Add(new Paragraph(" "));
 
             // Empezamos a crear la tabla, definimos una tabla de 6 columnas
-            var table = new PdfPTable(4);
-            
+            var table = new PdfPTable(5);
+
             // Escribo encabezado de columnas
             table.AddCell(new PdfPCell(new Phrase("Título")) { BackgroundColor = BaseColor.LIGHT_GRAY });
             table.AddCell(new PdfPCell(new Phrase("Fecha")) { BackgroundColor = BaseColor.LIGHT_GRAY });
             table.AddCell(new PdfPCell(new Phrase("Ubicación")) { BackgroundColor = BaseColor.LIGHT_GRAY });
+            table.AddCell(new PdfPCell(new Phrase("Etiquetas")) { BackgroundColor = BaseColor.LIGHT_GRAY });
             table.AddCell(new PdfPCell(new Phrase("Perfiles")) { BackgroundColor = BaseColor.LIGHT_GRAY });
 
             foreach (var empleo in empleos)
@@ -53,90 +55,96 @@ namespace GestorCV.API.Controllers.Servicios.Reportes.Factoria
                 table.AddCell(empleo.Titulo);
                 table.AddCell(empleo.FechaPublicacion);
                 table.AddCell(empleo.Ubicacion);
+                var etiquetas = empleo.Etiquetas.Select(x => x.Nombre).ToList();
+                table.AddCell(string.Join("/", etiquetas));
                 var perfiles = empleo.Perfiles.Select(x => x.Nombre).ToList();
                 table.AddCell(string.Join("/", perfiles));
             }
-            
+
             // Agregamos la tabla al documento
             doc.Add(table);
+
+            // Agregamos contador de empleos
+            doc.Add(new Paragraph(" "));
+            doc.Add(new Paragraph($"Total de empleos: {empleos.Count}"));
+            doc.Add(new Paragraph(" "));
+
+            // Agrego gráficos de etiquetas y perfiles 
+            AgregarGrafico(doc, empleos);
+
+            // Landscape
+            doc.SetPageSize(iTextSharp.text.PageSize.A4.Rotate());
+
             // Ceramos el documento
             doc.Close();
 
             return nombreArchivo;
         }
 
-        private void AgregarGraficoTorta(Document documento, Dictionary<string, float> valores)
+        private static void AgregarGrafico(Document doc, List<Models.Dtos.Empleo> empleos)
         {
-            //// Crea los datos del gráfico
-            //var data = new Dictionary<string, int>
-            //{
-            //    {"A", 10},
-            //    {"B", 20},
-            //    {"C", 30},
-            //};
+            doc.Add(new Paragraph(" "));
 
-            //// Crea el gráfico
-            //var chart = new Chart();
-            //chart.Type = Enums.ChartType.Pie;
+            var diccionarioEtiquetas = new Dictionary<string, int>();
+            var diccionarioPerfiles = new Dictionary<string, int>();
 
-            //chart.Data = new PieDataset
-            //{
-                
-            //}
+            foreach (var empleo in empleos)
+            {
+                foreach (var etiqueta in empleo.Etiquetas)
+                {
+                    if (diccionarioEtiquetas.ContainsKey(etiqueta.Nombre))
+                    {
+                        diccionarioEtiquetas[etiqueta.Nombre]++;
+                        continue;
+                    }
 
+                    diccionarioEtiquetas.Add(etiqueta.Nombre, 1);
+                }
 
-            //// Exporta el gráfico a una imagen
-            //var imageBytes = await chart.ToImage();
+                foreach (var perfil in empleo.Perfiles)
+                {
+                    if (diccionarioPerfiles.ContainsKey(perfil.Nombre))
+                    {
+                        diccionarioPerfiles[perfil.Nombre]++;
+                        continue;
+                    }
 
-            //// Guarda la imagen en el disco
-            //var imagePath = Path.Combine(Directory.GetCurrentDirectory(), "chart.png");
-            //using (var fileStream = new FileStream(imagePath, FileMode.Create))
-            //{
-            //    fileStream.Write(imageBytes, 0, imageBytes.Length);
-            //}
+                    diccionarioPerfiles.Add(perfil.Nombre, 1);
+                }
+            }
 
+            var graficoEtiquetas = new ImageCharts()
+                .cht("bvs")
+                .chs("500x190")
+                .chd($"t:{string.Join(',', diccionarioEtiquetas.Values.Select(x => x.ToString()).ToArray())}")
+                .chl(string.Join('|', diccionarioEtiquetas.Keys.Select(x => x).ToArray()))
+                .chlps("font.size,12")
+                .chxt("y")
+                .chtt("Etiquetas");
 
-            //var chart = new Chart { Width = 300, Height = 450, RenderType = RenderType.ImageTag, AntiAliasing = AntiAliasingStyles.All, TextAntiAliasingQuality = TextAntiAliasingQuality.High };
+            var base64Image = graficoEtiquetas.toDataURI().Replace("data:image/png;base64,", "");
+            var imageBytes = Convert.FromBase64String(base64Image);
+            var image = Image.GetInstance(imageBytes);
 
-            //// Crear un PlotModel con un PieSeries
-            //PieChart pieChart = new PieChart();
+            doc.Add(image);
 
-            //var model = new PlotModel { Title = "Gráfico Circular" };
-            //var series = new PieSeries();
-            //series.Slices.Add(new PieSlice("Categoría A", 30));
-            //series.Slices.Add(new PieSlice("Categoría B", 40));
-            //series.Slices.Add(new PieSlice("Categoría C", 20));
-            //series.Slices.Add(new PieSlice("Categoría D", 10));
-            //model.Series.Add(series);
-            //iTextSharp.text.charts;
-            //// Convertir el PlotModel a una imagen
-            //var ancho = 600;
-            //var alto = 400;
-            //var pngExporter = new PngExporter { Width = 600, Height = 400, Background = OxyColors.White };
-            //pngExporter.Export(plotModel, stream);
-            //var bitmap = new OxyPlot..WindowsForms.PngExporter().ExportToBitmap(model, ancho, alto, OxyColor.FromRgb(255, 255, 255));
+            doc.Add(new Paragraph(" "));
+            doc.Add(new Paragraph(" "));
 
-            //// Guardar la imagen en un MemoryStream
-            //using (MemoryStream ms = new MemoryStream())
-            //{
-            //    bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+            var graficoPerfiles = new ImageCharts()
+                .cht("bvs")
+                .chs("500x190")
+                .chd($"t:{string.Join(',', diccionarioPerfiles.Values.Select(x => x.ToString()).ToArray())}")
+                .chl(string.Join('|', diccionarioPerfiles.Keys.Select(x => x).ToArray()))
+                .chlps("font.size,12")
+                .chxt("y")
+                .chtt("Perfiles");
 
-            //    // Crear un documento PDF con iTextSharp
-            //    using (var pdfStream = new FileStream("GraficoCircular.pdf", FileMode.Create))
-            //    {
-            //        PdfWriter writer = new PdfWriter(pdfStream);
-            //        PdfDocument pdf = new PdfDocument(writer);
-            //        Document document = new Document(pdf);
+            base64Image = graficoPerfiles.toDataURI().Replace("data:image/png;base64,", "");
+            imageBytes = Convert.FromBase64String(base64Image);
+            image = Image.GetInstance(imageBytes);
 
-            //        // Agregar la imagen al documento PDF
-            //    }
-
-            //    iTextSharp.text.Image pic = iTextSharp.text.Image.GetInstance(image, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-            //    var img = new iTextSharp.text.Image(iText.Kernel.Pdf.ImageDataFactory.Create(ms.ToArray()));
-            //        documento.Add(img);
-            //}
-
+            doc.Add(image);
         }
     }
 }

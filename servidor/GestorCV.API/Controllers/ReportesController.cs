@@ -16,7 +16,7 @@ namespace GestorCV.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Empleos()
         {
-            var peticion = new PeticionEmpleos(new PeticionEmpleos.Parametros(UsuarioNombre), new RepositorioEmpleos());
+            var peticion = new PeticionEmpleos(new PeticionEmpleos.Parametros(UsuarioNombre, null), new RepositorioEmpleos());
             var resultado = (PeticionEmpleos.Resultado)EjecutorPeticiones.Ejecutar(peticion);
 
             string rutaArchivo = Path.Combine(Directory.GetCurrentDirectory(), resultado.Archivo);

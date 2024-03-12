@@ -35,6 +35,8 @@ public partial class Usuario
 
     public virtual ICollection<PerfilesUsuario> PerfilesUsuarios { get; set; } = new List<PerfilesUsuario>();
 
+    public virtual ICollection<EtiquetasUsuario> EtiquetasUsuarios { get; set; } = new List<EtiquetasUsuario>();
+
     public virtual ICollection<Postulacion> Postulaciones { get; set; } = new List<Postulacion>();
 
     public virtual ICollection<UsuariosGrupo> UsuariosGrupos { get; set; } = new List<UsuariosGrupo>();

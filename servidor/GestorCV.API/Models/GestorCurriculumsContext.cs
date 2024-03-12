@@ -1,5 +1,7 @@
 ﻿using GestorCV.API.Infraestructura;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace GestorCV.API.Models;
 
@@ -21,6 +23,8 @@ public partial class GestorCurriculumsContext : DbContext
     public virtual DbSet<Etiqueta> Etiquetas { get; set; }
 
     public virtual DbSet<EtiquetasEmpleo> EtiquetasEmpleos { get; set; }
+
+    public virtual DbSet<EtiquetasUsuario> EtiquetasUsuarios { get; set; }
 
     public virtual DbSet<Formulario> Formularios { get; set; }
 
@@ -54,11 +58,20 @@ public partial class GestorCurriculumsContext : DbContext
 
     public virtual DbSet<UsuariosPermiso> UsuariosPermisos { get; set; }
 
+    public virtual DbSet<AuditoriaAplicacion> AuditoriasAplicacion { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(AppConfiguration.ConnString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AuditoriaAplicacion>(entity =>
+        {
+            entity.Property(e => e.Ruta).IsRequired();
+            entity.Property(e => e.Accion).IsRequired();
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<Empleo>(entity =>
         {
             entity.Property(e => e.Descripcion).IsRequired();
@@ -87,6 +100,19 @@ public partial class GestorCurriculumsContext : DbContext
                 .HasForeignKey(d => d.IdEtiqueta)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EtiquetasEmpleos_Etiquetas");
+        });
+
+        modelBuilder.Entity<EtiquetasUsuario>(entity =>
+        {
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.EtiquetasUsuarios)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EtiquetasUsuarios_Usuarios");
+
+            entity.HasOne(d => d.IdEtiquetaNavigation).WithMany(p => p.EtiquetasUsuarios)
+                .HasForeignKey(d => d.IdEtiqueta)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EtiquetasUsuarios_Etiquetas");
         });
 
         modelBuilder.Entity<Formulario>(entity =>
@@ -172,6 +198,7 @@ public partial class GestorCurriculumsContext : DbContext
         modelBuilder.Entity<Postulacion>(entity =>
         {
             entity.Property(e => e.Estado).IsRequired();
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
 
             entity.HasOne(d => d.IdEmpleoNavigation).WithMany(p => p.Postulaciones)
                 .HasForeignKey(d => d.IdEmpleo)
@@ -278,4 +305,10 @@ public partial class GestorCurriculumsContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    // Método para ejecutar SQL plano
+    public void ExecuteRawSql(string sqlQuery, params object[] parameters)
+    {
+        Empleos.FromSqlRaw(sqlQuery, parameters);
+    }
 }

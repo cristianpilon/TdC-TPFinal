@@ -29,5 +29,8 @@ namespace GestorCV.API.Infraestructura
 
         public static string SmtpPassword => _config.GetSection("CorreoSMTP:Password").Get<string>();
 
+        public static string RutaRespaldos => _config.GetSection("Respaldos:Ruta").Get<string>();
+
+        public static string RutaLogs => _config.GetSection("Logs:Ruta").Get<string>();
     }
 }

@@ -48,6 +48,9 @@ namespace GestorCV.API.Infraestructura
                         response.StatusCode = (int)HttpStatusCode.InternalServerError; // 500
                         response.ContentType = "application/json";
                         bodyResponse = JsonConvert.SerializeObject(new { Mensaje = "Ha ocurrido un error. Contacte al equipo técnico para más detalles" });
+
+                        // Escribo el error en los logs
+                        Logger.LogException(error);
                         break;
                 }
 

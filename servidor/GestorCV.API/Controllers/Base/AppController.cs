@@ -1,71 +1,77 @@
 ﻿using GestorCV.API.Controllers.Servicios;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System;
-using GestorCV.API.Infraestructura;
-using GestorCV.API.Repositorios;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using GestorCV.API.Infraestructura.Seguridad;
+using GestorCV.API.Models.Dtos;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GestorCV.API.Controllers.Base
 {
     public class AppController : ControllerBase
     {
+        private Models.Dtos.Usuario _usuario;
+
         protected Models.Dtos.Usuario ObtenerUsuarioToken()
         {
-            //var tokenNoSanitizado = HttpContext.Request.Headers["Authorization"].ToString();
-            string token = FactoriaTokens.fixedToken;
-            //var token = AuthenticationHeaderValue.Parse(tokenNoSanitizado).Parameter.Trim('"');
-            
-
-            ClaimsPrincipal datosToken;
-            var jwtIssuer = AppConfiguration.FirmaToken;
-            var jwtKey = AppConfiguration.ClaveToken;
-
-            try
+            if (_usuario != null)
             {
-                // Validar datos del token
-                var validationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtIssuer,
-                    ValidAudience = jwtIssuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                datosToken = tokenHandler.ValidateToken(token, validationParameters, out _);
-
-                // Obtener ID de usuario desde el token
-                var idUsuario = int.Parse(datosToken.FindFirstValue(ClaimTypes.NameIdentifier));
-                
-                var repositorioUsuarios = new RepositorioUsuarios();
-
-                return repositorioUsuarios.ObtenerConAccesos(idUsuario);
+                return _usuario;
             }
-            catch (SecurityTokenException)
+
+            _usuario = ManejadorTokens.ObtenerUsuarioToken(HttpContext.Request);
+
+            return _usuario;
+        }
+
+        public EjecutorPeticiones EjecutorPeticiones { get; set; }
+
+        public int UsuarioId
+        {
+            get
             {
-                // Si hubo un error de seguridad en el token, no se autoriza
-                return null;
+                var usuario = ObtenerUsuarioToken();
+                if (usuario == null)
+                {
+                    return 0;
+                }
+
+                return ObtenerUsuarioToken().Id;
             }
         }
 
-        protected EjecutorPeticiones EjecutorPeticiones { get; set; }
-
-        protected int UsuarioId { get { return ObtenerUsuarioToken().Id; } }
-
-        protected string UsuarioCorreo { get { return ObtenerUsuarioToken().Correo; } }
-
-        protected string UsuarioNombre { 
-            get {
+        public Rol UsuarioRol
+        {
+            get
+            {
                 var usuario = ObtenerUsuarioToken();
-                return $"{usuario.Nombre} {usuario.Apellido} "; 
-            } 
+                if (usuario == null)
+                {
+                    return null;
+                }
+
+                return ObtenerUsuarioToken().Rol;
+            }
+        }
+
+        protected string UsuarioCorreo
+        {
+            get
+            {
+                var usuario = ObtenerUsuarioToken();
+                if (usuario == null)
+                {
+                    return string.Empty;
+                }
+
+                return ObtenerUsuarioToken().Correo;
+            }
+        }
+
+        protected string UsuarioNombre
+        {
+            get
+            {
+                var usuario = ObtenerUsuarioToken();
+                return $"{usuario.Nombre} {usuario.Apellido} ";
+            }
         }
 
         public AppController()

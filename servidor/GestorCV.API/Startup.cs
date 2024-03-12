@@ -24,6 +24,9 @@ namespace GestorCV.API
             // fácilmente a estos valores desde cualquier parte de la aplicación) la finalidad es no perder
             // visibilidad de donde se guardan estos valores e inicializarlos solo al comienzo.
             _ = new AppConfiguration(configuration);
+
+            // Se crea carpeta de backups si no existe
+            System.IO.Directory.CreateDirectory(AppConfiguration.RutaRespaldos);
         }
 
         public IConfiguration Configuration { get; }
@@ -41,6 +44,8 @@ namespace GestorCV.API
             {
                 options.AllowEmptyInputInBodyModelBinding = true;
             });
+
+            Logger.ConfigureLogger();
 
             // Agrego configuracion para autorizar solo usuarios con token
             var jwtIssuer = AppConfiguration.FirmaToken;
@@ -78,10 +83,11 @@ namespace GestorCV.API
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
-
-            app.UseMiddleware<ErrorHandlerMiddleware>()
+            app.UseMiddleware<InterceptorAuditoriaAcciones>()
+                .UseMiddleware<ErrorHandlerMiddleware>()
                 .UseMiddleware<AutorizacionMiddleware>();
+
+            app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -1,40 +1,25 @@
-import React, { useState } from "react";
+import React, { MouseEventHandler, FC } from "react";
+
 interface ModalProps {
+  mostrar: boolean;
+  titulo: string;
+  onCambiarModal: MouseEventHandler<HTMLButtonElement>;
   children: React.ReactNode;
+  onAceptarAccion?: MouseEventHandler<HTMLButtonElement>;
 }
 
-const Modal: React.FC<ModalProps> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsOpen(!isOpen);
-  };
-
-  if (!isOpen) {
-    return (
-      <>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          onClick={toggleModal}
-        >
-          Open Modal
-        </button>
-      </>
-    );
-  }
-
+const Modal: FC<ModalProps> = ({
+  mostrar,
+  titulo,
+  onCambiarModal,
+  children,
+  onAceptarAccion,
+}) => {
   return (
     <>
-      <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={toggleModal}
-      >
-        Open Modal
-      </button>
-
       <div
-        className={`fixed z-50 inset-0 overflow-y-auto ${
-          isOpen ? "block" : "invisible md:visible md:flex"
+        className={`modal-overlay ${
+          mostrar ? "block" : "invisible md:visible md:flex"
         }`}
         aria-labelledby="modal-title"
         role="dialog"
@@ -53,28 +38,33 @@ const Modal: React.FC<ModalProps> = ({ children }) => {
             &#8203;
           </span>
 
-          <div className="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+          <div className="modal-size uai-shadow border relative inline-block align-bottom bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <h3
-                    className="text-lg leading-6 font-medium text-gray-900"
+                    className="text-left py-2 text-lg leading-6 font-medium text-gray-900 border-b"
                     id="modal-title"
                   >
-                    Modal Title
+                    <strong>{titulo}</strong>
                   </h3>
                   <div className="mt-2">{children}</div>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button
-                type="button"
-                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
-                onClick={toggleModal}
-              >
-                Close
+            <div className="text-right bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button type="button" className="boton" onClick={onCambiarModal}>
+                {onAceptarAccion ? "Cancelar" : "Cerrar"}
               </button>
+              {onAceptarAccion && (
+                <button
+                  type="button"
+                  className="boton ml-2"
+                  onClick={onAceptarAccion}
+                >
+                  Aceptar
+                </button>
+              )}
             </div>
           </div>
         </div>
