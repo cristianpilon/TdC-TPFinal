@@ -82,6 +82,12 @@ public partial class GestorCurriculumsContext : DbContext
             entity.Property(e => e.TipoTrabajo).IsRequired();
             entity.Property(e => e.Titulo).IsRequired();
             entity.Property(e => e.Ubicacion).IsRequired();
+            entity.Property(e => e.IdUsuarioCreador).IsRequired();
+
+            entity.HasOne(e => e.IdUsuarioCreadorNavigation).WithMany(u => u.Empleos)
+                .HasForeignKey(e => e.IdUsuarioCreador)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Empleos_Usuarios");
         });
 
         modelBuilder.Entity<Etiqueta>(entity =>

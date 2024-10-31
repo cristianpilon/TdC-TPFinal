@@ -42,4 +42,6 @@ public partial class Usuario
     public virtual ICollection<UsuariosGrupo> UsuariosGrupos { get; set; } = new List<UsuariosGrupo>();
 
     public virtual ICollection<UsuariosPermiso> UsuariosPermisos { get; set; } = new List<UsuariosPermiso>();
+
+    public virtual ICollection<Empleo> Empleos { get; set; } = new List<Empleo>();
 }

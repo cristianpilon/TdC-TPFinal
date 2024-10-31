@@ -233,7 +233,7 @@ export default function Empleos() {
               }}
             />
             <button
-              className="ml-0 boton text-white font-bold py-2 px-4"
+              className="ml-0 boton text-black font-bold py-2 px-4"
               onClick={clickBuscar}
             >
               Buscar
@@ -242,7 +242,7 @@ export default function Empleos() {
           <div className="flex relative h-9 basis-1/2 pl-4 justify-end">
             <button
               onClick={clickMostrarModalReporte}
-              className="boton text-white font-bold py-2 px-4"
+              className="boton text-black font-bold py-2 px-4"
             >
               Reporte
               {/* Descargar listado */}
@@ -369,14 +369,14 @@ export default function Empleos() {
                         </div>
                       </div>
                       <div className="entrada-empleo-botones mt-auto pt-2 flex justify-end">
-                        <button className="text-xs boton text-white font-bold py-2 px-4">
+                        <button className="text-xs boton text-black font-bold py-2 px-4">
                           Guardar oferta
                         </button>
-                        <button className="ml-2 boton text-white font-bold py-2 px-4">
+                        <button className="ml-2 boton text-black font-bold py-2 px-4">
                           Ver oferta
                         </button>
-                        <button className="boton btn-primary text-white font-bold ml-2 py-2 px-4">
-                          Posularme
+                        <button className="boton btn-primary font-bold ml-2 py-2 px-4">
+                          Postularme
                         </button>
                       </div>
                     </div>
@@ -498,13 +498,13 @@ export default function Empleos() {
                           </div>
                         </div>
                         <div className="entrada-empleo-botones mt-auto pt-2 flex justify-end">
-                          <button className="text-xs boton text-white font-bold py-2 px-4">
+                          <button className="text-xs boton text-black font-bold py-2 px-4">
                             Guardar oferta
                           </button>
-                          <button className="ml-2 boton text-white font-bold py-2 px-4">
+                          <button className="ml-2 boton text-black font-bold py-2 px-4">
                             Ver oferta
                           </button>
-                          <button className="boton btn-primary text-white font-bold ml-2 py-2 px-4">
+                          <button className="boton btn-primary font-bold ml-2 py-2 px-4">
                             Posularme
                           </button>
                         </div>

@@ -17,11 +17,11 @@ namespace GestorCV.API
         {
             Configuration = configuration;
 
-            // Inicializa variables est�ticos para configuraciones generales.
-            // NOTA: Esto podr�a generarse por medio del registro de servicios para inyecci�n de dependencias
-            // nativo de NET Core pero perder�a visibilidad y complejizar�a el modelo para inyectar variables
-            // muy sencillas. Si bien esto se considera una mala pr�ctica (los desarrolladores podr�an acceder
-            // f�cilmente a estos valores desde cualquier parte de la aplicaci�n) la finalidad es no perder
+            // Inicializa variables estáticas para configuraciones generales.
+            // NOTA: Esto podría generarse por medio del registro de servicios para inyección de dependencias
+            // nativo de NET Core pero perdería visibilidad y complejizaría el modelo para inyectar variables
+            // muy sencillas. Si bien esto se considera una mala práctica (los desarrolladores podrían acceder
+            // fácilmente a estos valores desde cualquier parte de la aplicación) la finalidad es no perder
             // visibilidad de donde se guardan estos valores e inicializarlos solo al comienzo.
             _ = new AppConfiguration(configuration);
 
@@ -73,10 +73,12 @@ namespace GestorCV.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                // Habilito swagger para documentación de API
                 app.UseSwagger();
                 app.UseSwaggerUI(options =>
                 {
-                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API Gestor de Curriculums");
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "API UAI Talent Hub");
                     options.RoutePrefix = string.Empty;
                 });
             }

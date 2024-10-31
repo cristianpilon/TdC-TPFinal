@@ -1,0 +1,168 @@
+#tipTapEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+#tipTapEditor button {
+  background-color: #4b4b4b;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 0.5rem;
+}
+
+#tipTapEditor button:hover {
+  background-color: #636363;
+}
+
+#tipTapEditor button:disabled {
+  background-color: #2e2e2e;
+  color: #7a7a7a;
+  cursor: not-allowed;
+}
+
+#tipTapEditor .tiptap {
+  min-height: 300px;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+#tipTapEditor .tiptap:focus-visible {
+  outline: none;
+}
+
+#tipTapEditor .tiptap > * + * {
+  margin-top: 1rem;
+}
+
+#tipTapEditor .tiptap ul,
+#tipTapEditor .tiptap ol {
+  padding: 0 1.5rem;
+}
+
+#tipTapEditor .tiptap h1,
+#tipTapEditor .tiptap h2,
+#tipTapEditor .tiptap h3,
+#tipTapEditor .tiptap h4,
+#tipTapEditor .tiptap h5,
+#tipTapEditor .tiptap h6 {
+  line-height: 1.25;
+  margin-top: 1rem;
+}
+
+#tipTapEditor .tiptap code {
+  background-color: #ececec;
+  color: #d63384;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+}
+
+#tipTapEditor .tiptap pre {
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  font-family: "JetBrains Mono", monospace;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+#tipTapEditor .tiptap pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.9rem;
+  border: none;
+}
+
+#tipTapEditor .tiptap img {
+  max-width: 100%;
+  height: auto;
+}
+
+#tipTapEditor .tiptap blockquote {
+  margin-left: 0;
+  padding-left: 1.5rem;
+  border-left: 3px solid #ccc;
+  font-style: italic;
+  color: #555;
+}
+
+#tipTapEditor .tiptap hr {
+  border: none;
+  border-top: 2px solid #ddd;
+  margin: 2rem 0;
+}
+
+#tipTapEditor .button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+#tipTapEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+#tipTapEditor .button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+#tipTapEditor button {
+  background-color: #4b4b4b;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 0.5rem;
+  white-space: nowrap; /* Evita que el texto se corte en varias líneas */
+  flex: 0 1 auto; /* Permite que los botones se adapten sin ocupar todo el ancho */
+}
+
+#tipTapEditor button:hover {
+  background-color: #636363;
+}
+
+#tipTapEditor button:disabled {
+  background-color: #2e2e2e;
+  color: #7a7a7a;
+  cursor: not-allowed;
+}
+
+#tipTapEditor .tiptap {
+  min-height: 300px;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+#tipTapEditor .tiptap a {
+  color: rgb(0, 0, 200);
+  text-decoration: underline;
+}
+
+#tipTapEditor .tiptap ul {
+  list-style-type: disc;
+}
+
+#tipTapEditor .tiptap ol {
+  list-style-type: decimal;
+}
