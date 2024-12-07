@@ -27,25 +27,29 @@ namespace GestorCV.API.Repositorios
             var repositorioFormularios = new RepositorioFormularios();
             var grupos = _contexto.Grupos
                 .Where(g => g.Id == id || (g.IdGrupoPadre.HasValue && g.IdGrupoPadre == id))
+                .AsNoTracking()
                 .ToList();
+
+            var gruposIds = grupos.Select(g => g.Id).ToList();
 
             var permisos = _contexto.GruposPermisos
                 .Include(gp => gp.IdPermisoNavigation)
-                .Include("IdPermisoNavigation.IdFormularioNavigation")
-                .Where(gp => grupos.Any(g => g.Id == gp.IdGrupo))
-                .ToList() // Busca los permisos en la base de datos
+                .ThenInclude(x => x.IdFormularioNavigation)
+                .Where(gp => gruposIds.Contains(gp.IdGrupo))
+                .ToList()
                 .Select(pg =>
-                new Permiso(
-                    pg.IdPermiso,
-                    pg.IdPermisoNavigation.Nombre,
-                    pg.IdPermisoNavigation.Accion,
-                    new Formulario(
-                        pg.IdPermisoNavigation.IdFormulario,
-                        pg.IdPermisoNavigation.IdFormularioNavigation.Nombre,
-                        repositorioFormularios.ObtenerRutas(pg.IdPermisoNavigation.IdFormulario)
+                    new Permiso(
+                        pg.IdPermiso,
+                        pg.IdPermisoNavigation.Nombre,
+                        pg.IdPermisoNavigation.Accion,
+                        new Formulario(
+                            pg.IdPermisoNavigation.IdFormulario,
+                            pg.IdPermisoNavigation.IdFormularioNavigation.Nombre,
+                            repositorioFormularios.ObtenerRutas(pg.IdPermisoNavigation.IdFormulario)
+                        )
                     )
                 )
-            ).ToList();
+                .ToList();
 
             // Obtengo los grupos hijos para extraer los permisos asociados a estos
             var gruposHijosIds = grupos

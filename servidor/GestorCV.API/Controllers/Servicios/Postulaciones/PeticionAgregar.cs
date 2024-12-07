@@ -3,7 +3,6 @@ using GestorCV.API.Controllers.Servicios.Interfaces;
 using GestorCV.API.Infraestructura;
 using GestorCV.API.Repositorios;
 using GestorCV.API.Repositorios.Interfaces;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using System.Collections.Generic;
 
 namespace GestorCV.API.Controllers.Servicios.Postulaciones
@@ -34,7 +33,7 @@ namespace GestorCV.API.Controllers.Servicios.Postulaciones
                 AppConfiguration.SmtpCorreoOrigen,
                 ParametrosPeticion.CorreoUsuario,
                 $"{respuestaNuevaPostulacion.Usuario} - Nueva postulación a empleo '{respuestaNuevaPostulacion.Empleo}'",
-                $"Estimado {respuestaNuevaPostulacion.Usuario}, se ha publicado la propuesta al empleo {respuestaNuevaPostulacion.Empleo}. En breve la organización revisará su perfil he informará los resultados. Muchas Gracias");
+                $"Estimado {respuestaNuevaPostulacion.Usuario}, se ha publicado la propuesta al empleo {respuestaNuevaPostulacion.Empleo}. En breve la organización revisará su perfil e informará los resultados. Muchas Gracias");
 
         }
 

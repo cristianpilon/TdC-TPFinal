@@ -2,9 +2,11 @@
 using GestorCV.API.Infraestructura;
 using GestorCV.API.Repositorios.Interfaces;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GestorCV.API.Controllers.Base
 {
+    [DebuggerStepThrough]
     public abstract class PeticionBase : IPeticion
     {
         public PeticionBase(IRepositorio repositorio)

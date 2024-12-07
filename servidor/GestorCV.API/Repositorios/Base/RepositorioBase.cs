@@ -1,9 +1,10 @@
 ﻿using GestorCV.API.Models;
 using GestorCV.API.Repositorios.Interfaces;
-using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace GestorCV.API.Repositorios.Base
 {
+    [DebuggerStepThrough]
     public abstract class RepositorioBase : IRepositorio
     {
         protected readonly GestorCurriculumsContext _contexto;

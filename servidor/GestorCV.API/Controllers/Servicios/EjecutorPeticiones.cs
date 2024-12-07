@@ -1,8 +1,10 @@
 ﻿using GestorCV.API.Controllers.Servicios.Interfaces;
 using GestorCV.API.Infraestructura;
+using System.Diagnostics;
 
 namespace GestorCV.API.Controllers.Servicios
 {
+    [DebuggerStepThrough]
     public class EjecutorPeticiones
     {
         public IResultado Ejecutar(IPeticion peticion)

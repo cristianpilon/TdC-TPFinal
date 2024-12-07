@@ -5,7 +5,7 @@ namespace GestorCV.API.Models.Dtos;
 
 public sealed class Usuario : EntidadConAcceso
 {
-    public Usuario(int id, string nombre, string apellido, string correo, Rol rol, List<Acceso> accesos)
+    public Usuario(int id, string nombre, string apellido, string correo, Rol rol = null, List<Acceso> accesos = null)
         : base(accesos)
     {
         Id = id;

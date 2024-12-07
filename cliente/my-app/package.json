@@ -9,17 +9,32 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tiptap/extension-image": "^2.8.0",
+    "@tiptap/extension-link": "^2.8.0",
+    "@tiptap/extension-text-align": "^2.8.0",
+    "@tiptap/extension-underline": "^2.8.0",
+    "@tiptap/pm": "^2.8.0",
+    "@tiptap/react": "^2.8.0",
+    "@tiptap/starter-kit": "^2.8.0",
     "@types/node": "20.4.2",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.14",
+    "chart.js": "^4.4.2",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.10",
     "next": "13.4.10",
     "postcss": "8.4.26",
     "react": "18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-datepicker": "^6.1.0",
     "react-dom": "18.2.0",
+    "react-select": "^5.8.0",
+    "react-tabs": "^6.0.2",
     "tailwindcss": "3.3.3",
     "typescript": "5.1.6"
+  },
+  "devDependencies": {
+    "@types/react-datepicker": "^6.0.1"
   }
 }

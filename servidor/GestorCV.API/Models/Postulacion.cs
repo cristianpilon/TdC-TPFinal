@@ -13,6 +13,8 @@ public partial class Postulacion
 
     public string Estado { get; set; }
 
+    public DateTime Fecha { get; set; }
+
     public virtual Empleo IdEmpleoNavigation { get; set; }
 
     public virtual Usuario IdUsuarioNavigation { get; set; }

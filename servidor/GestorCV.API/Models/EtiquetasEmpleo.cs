@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GestorCV.API.Models;
+﻿namespace GestorCV.API.Models;
 
 public partial class EtiquetasEmpleo
 {

@@ -1,0 +1,70 @@
+2024-10-18 21:22:51.509 -03:00 [ERR] Exception caught
+System.ArgumentException: IDX12741: JWT: '[PII of type 'System.String' is hidden. For more details, see https://aka.ms/IdentityModel/PII.]' must have three segments (JWS) or five segments (JWE).
+   at System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateToken(String token, TokenValidationParameters validationParameters, SecurityToken& validatedToken)
+   at GestorCV.API.Infraestructura.Seguridad.ManejadorTokens.ObtenerUsuarioToken(HttpRequest peticionHttp) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\ManejadorTokens.cs:line 43
+   at GestorCV.API.Infraestructura.Seguridad.InterceptorAuditoriaAcciones.RegistrarAuditoría(HttpContext contexto) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\InterceptorAuditoriaAcciones.cs:line 63
+2024-10-18 21:22:50.086 -03:00 [ERR] Exception caught
+System.ObjectDisposedException: Cannot access a disposed object.
+Object name: 'HttpRequestStream'.
+   at Microsoft.AspNetCore.Server.IIS.Core.HttpRequestStream.ValidateState(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.IIS.Core.HttpRequestStream.ReadAsync(Memory`1 destination, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.WebUtilities.FileBufferingReadStream.ReadAsync(Memory`1 buffer, CancellationToken cancellationToken)
+   at GestorCV.API.Infraestructura.Seguridad.InterceptorAuditoriaAcciones.RegistrarAuditoría(HttpContext contexto) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\InterceptorAuditoriaAcciones.cs:line 50
+2024-10-18 21:23:01.790 -03:00 [ERR] Exception caught
+System.ArgumentException: IDX12741: JWT: '[PII of type 'System.String' is hidden. For more details, see https://aka.ms/IdentityModel/PII.]' must have three segments (JWS) or five segments (JWE).
+   at System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateToken(String token, TokenValidationParameters validationParameters, SecurityToken& validatedToken)
+   at GestorCV.API.Infraestructura.Seguridad.ManejadorTokens.ObtenerUsuarioToken(HttpRequest peticionHttp) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\ManejadorTokens.cs:line 43
+   at GestorCV.API.Controllers.Base.AppController.ObtenerUsuarioToken() in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Controllers\Base\AppController.cs:line 19
+   at GestorCV.API.Controllers.Base.AppController.get_UsuarioId() in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Controllers\Base\AppController.cs:line 30
+   at GestorCV.API.Controllers.EmpleosController.ObtenerTodosSeguridos() in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Controllers\EmpleosController.cs:line 31
+   at lambda_method25(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at GestorCV.API.Infraestructura.Seguridad.AutorizacionMiddleware.Invoke(HttpContext context) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\AutorizacionMiddleware.cs:line 61
+   at GestorCV.API.Infraestructura.ErrorHandlerMiddleware.Invoke(HttpContext context) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\ExceptionMiddleware.cs:line 22
+2024-10-18 22:25:59.996 -03:00 [ERR] Exception caught
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at GestorCV.API.Repositorios.RepositorioCurriculums.Obtener(Int32 id) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Repositorios\RepositorioCurriculums.cs:line 107
+   at GestorCV.API.Controllers.Servicios.Curriculums.PeticionObtener.Procesar() in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Controllers\Servicios\Curriculums\PeticionObtener.cs:line 26
+   at GestorCV.API.Controllers.Base.PeticionBase.ProcesarExtendido() in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Controllers\Base\PeticionBase.cs:line 26
+   at GestorCV.API.Controllers.Servicios.EjecutorPeticiones.Ejecutar(IPeticion peticion) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Controllers\Servicios\EjecutorPeticiones.cs:line 22
+   at GestorCV.API.Controllers.CurriculumsController.Obtener() in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Controllers\CurriculumsController.cs:line 20
+   at lambda_method667(Closure, Object, Object[])
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.SyncActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeNextResourceFilter>g__Awaited|25_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Rethrow(ResourceExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.InvokeFilterPipelineAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|6_0(Endpoint endpoint, Task requestTask, ILogger logger)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at GestorCV.API.Infraestructura.Seguridad.AutorizacionMiddleware.Invoke(HttpContext context) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\AutorizacionMiddleware.cs:line 61
+   at GestorCV.API.Infraestructura.ErrorHandlerMiddleware.Invoke(HttpContext context) in C:\Users\cpilon\OneDrive - ENDAVA\Documents\Cristian\Casa\Facultad\Trabajo de Campo y Diploma\TrabajoFinal\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\ExceptionMiddleware.cs:line 22
