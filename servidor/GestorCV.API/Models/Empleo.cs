@@ -23,13 +23,13 @@ public partial class Empleo
 
     public string TipoTrabajo { get; set; }
 
-    public string Empresa { get; set; }
-
-    public string EmpresaLogo { get; set; }
-
     public bool Destacado { get; set; }
 
     public int IdUsuarioCreador { get; set; }
+
+    public int IdEmpresa { get; set; }
+
+    public virtual Empresa IdEmpresaNavigation { get; set; }
 
     public virtual Usuario IdUsuarioCreadorNavigation { get; set; }
 

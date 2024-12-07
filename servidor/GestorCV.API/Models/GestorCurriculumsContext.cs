@@ -1,7 +1,5 @@
 ﻿using GestorCV.API.Infraestructura;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 
 namespace GestorCV.API.Models;
 
@@ -15,12 +13,15 @@ public partial class GestorCurriculumsContext : DbContext
         : base(options)
     {
     }
-
     public virtual DbSet<Curriculum> Curriculums { get; set; }
 
     public virtual DbSet<Empleo> Empleos { get; set; }
 
+    public virtual DbSet<Curso> Cursos { get; set; }
+
     public virtual DbSet<Etiqueta> Etiquetas { get; set; }
+
+    public virtual DbSet<EtiquetasCurso> EtiquetasCursos { get; set; }
 
     public virtual DbSet<EtiquetasEmpleo> EtiquetasEmpleos { get; set; }
 
@@ -35,6 +36,8 @@ public partial class GestorCurriculumsContext : DbContext
     public virtual DbSet<Notificacion> Notificaciones { get; set; }
 
     public virtual DbSet<Perfil> Perfiles { get; set; }
+
+    public virtual DbSet<PerfilesCurso> PerfilesCursos { get; set; }
 
     public virtual DbSet<PerfilesEmpleo> PerfilesEmpleos { get; set; }
 
@@ -88,11 +91,47 @@ public partial class GestorCurriculumsContext : DbContext
                 .HasForeignKey(e => e.IdUsuarioCreador)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Empleos_Usuarios");
+
+            entity.HasOne(e => e.IdEmpresaNavigation).WithMany(e => e.Empleos)
+                .HasForeignKey(e => e.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Empleos_Empresas");
+        });
+
+        modelBuilder.Entity<Curso>(entity =>
+        {
+            entity.Property(e => e.Mensaje).IsRequired();
+            entity.Property(e => e.Titulo).IsRequired();
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+            entity.Property(e => e.IdUsuarioCreador).IsRequired();
+
+            entity.HasOne(e => e.IdUsuarioCreadorNavigation).WithMany(u => u.Cursos)
+                .HasForeignKey(e => e.IdUsuarioCreador)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Cursos_Usuarios");
+
+            entity.HasOne(e => e.IdEmpresaNavigation).WithMany(e => e.Cursos)
+                .HasForeignKey(e => e.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Cursos_Empresas");
         });
 
         modelBuilder.Entity<Etiqueta>(entity =>
         {
             entity.Property(e => e.Nombre).IsRequired();
+        });
+
+        modelBuilder.Entity<EtiquetasCurso>(entity =>
+        {
+            entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.EtiquetasCursos)
+                .HasForeignKey(d => d.IdCurso)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EtiquetasCursos_Cursos");
+
+            entity.HasOne(d => d.IdEtiquetaNavigation).WithMany(p => p.EtiquetasCursos)
+                .HasForeignKey(d => d.IdEtiqueta)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EtiquetasCursos_Etiquetas");
         });
 
         modelBuilder.Entity<EtiquetasEmpleo>(entity =>
@@ -160,6 +199,21 @@ public partial class GestorCurriculumsContext : DbContext
         modelBuilder.Entity<Perfil>(entity =>
         {
             entity.Property(e => e.Nombre).IsRequired();
+        });
+
+        modelBuilder.Entity<PerfilesCurso>(entity =>
+        {
+            entity.Property(e => e.Id).ValueGeneratedNever();
+
+            entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.PerfilesCursos)
+                .HasForeignKey(d => d.IdCurso)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PerfilesCursos_Cursos");
+
+            entity.HasOne(d => d.IdPerfilNavigation).WithMany(p => p.PerfilesCursos)
+                .HasForeignKey(d => d.IdPerfil)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PerfilesCursos_Perfiles");
         });
 
         modelBuilder.Entity<PerfilesEmpleo>(entity =>

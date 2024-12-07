@@ -4,7 +4,7 @@ using GestorCV.API.Repositorios;
 using GestorCV.API.Repositorios.Interfaces;
 using System.Collections.Generic;
 
-namespace GestorCV.API.Controllers.Servicios.Empleos
+namespace GestorCV.API.Controllers.Servicios.Cursos
 {
     public class PeticionObtener : PeticionBase
     {
@@ -23,17 +23,17 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
 
         public override IResultado Procesar()
         {
-            var empleo = ((IRepositorioEmpleos)Repositorio).Obtener(ParametrosPeticion.Id);
+            var curso = ((IRepositorioCursos)Repositorio).Obtener(ParametrosPeticion.Id);
 
             var perfiles = repositorioPerfiles.ObtenerTodos();
             var etiquetas = repositorioEtiquetas.ObtenerTodos();
 
-            return new Resultado { Empleo = empleo, Perfiles = perfiles, Etiquetas = etiquetas };
+            return new Resultado { Curso = curso, Perfiles = perfiles, Etiquetas = etiquetas };
         }
 
         public class Resultado : IResultado
         {
-            public Models.Dtos.Empleo Empleo { get; set; }
+            public Models.Dtos.Curso Curso { get; set; }
 
             public List<Models.Dtos.Etiqueta> Etiquetas { get; set; }
 

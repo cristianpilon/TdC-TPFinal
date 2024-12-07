@@ -28,6 +28,7 @@ namespace GestorCV.API.Repositorios
         public List<Models.Dtos.Empleo> ObtenerTodos(string criterio)
         {
             var empleos = _contexto.Empleos
+                .Include(e => e.IdEmpresaNavigation)
                 .Include(e => e.EtiquetasEmpleos)
                 .ThenInclude(e => e.IdEtiquetaNavigation)
                 .Include(e => e.PerfilesEmpleos)
@@ -35,7 +36,7 @@ namespace GestorCV.API.Repositorios
                 .Where(e =>
                     string.IsNullOrEmpty(criterio)
                     || e.Titulo.Contains(criterio)
-                    || e.Empresa.Contains(criterio)
+                    || e.IdEmpresaNavigation.Nombre.Contains(criterio)
                     || e.Ubicacion.Contains(criterio))
                 .ToList();
 
@@ -51,7 +52,7 @@ namespace GestorCV.API.Repositorios
                         .ToList();
 
                     return new Models.Dtos.Empleo(e.Id, e.Titulo, e.Descripcion, e.Ubicacion, e.Remuneracion, e.ModalidadTrabajo,
-                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, e.Empresa, e.EmpresaLogo, e.Destacado, etiquetas, perfiles);
+                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo, e.Destacado, etiquetas, perfiles);
                 })
                 .ToList();
         }
@@ -63,7 +64,13 @@ namespace GestorCV.API.Repositorios
         /// <returns>Empleo guardado en base de datos.</returns>
         public Models.Dtos.Empleo Obtener(int id)
         {
+            if (id == 0)
+            {
+                return null;
+            }
+
             var empleo = _contexto.Empleos
+                .Include(e => e.IdEmpresaNavigation)
                 .Include(e => e.EtiquetasEmpleos)
                 .ThenInclude(ee => ee.IdEtiquetaNavigation)
                 .Include(e => e.PerfilesEmpleos)
@@ -79,7 +86,7 @@ namespace GestorCV.API.Repositorios
                 .ToList();
 
             return new Models.Dtos.Empleo(empleo.Id, empleo.Titulo, empleo.Descripcion, empleo.Ubicacion, empleo.Remuneracion, empleo.ModalidadTrabajo,
-                empleo.FechaPublicacion, empleo.HorariosLaborales, empleo.TipoTrabajo, empleo.Empresa, empleo.EmpresaLogo, empleo.Destacado, etiquetas, perfiles);
+                empleo.FechaPublicacion, empleo.HorariosLaborales, empleo.TipoTrabajo, empleo.IdEmpresaNavigation.Nombre, empleo.IdEmpresaNavigation.Logo, empleo.Destacado, etiquetas, perfiles);
         }
 
         /// <summary>
@@ -104,6 +111,7 @@ namespace GestorCV.API.Repositorios
 
             // Filtro los empleos por el criterio y las coincidencias con el usuario especificado
             var empleos = _contexto.Empleos
+                .Include(e => e.IdEmpresaNavigation)
                 .Include(e => e.EtiquetasEmpleos)
                     .ThenInclude(ee => ee.IdEtiquetaNavigation)
                 .Include(e => e.PerfilesEmpleos)
@@ -134,7 +142,7 @@ namespace GestorCV.API.Repositorios
                         .ToList();
 
                     return new Models.Dtos.Empleo(e.Id, e.Titulo, e.Descripcion, e.Ubicacion, e.Remuneracion, e.ModalidadTrabajo,
-                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, e.Empresa, e.EmpresaLogo, e.Destacado, etiquetas, perfiles);
+                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo, e.Destacado, etiquetas, perfiles);
                 })
                 .ToList();
         }

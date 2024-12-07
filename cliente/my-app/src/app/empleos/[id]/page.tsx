@@ -93,7 +93,7 @@ export default function Empleo({ params }: { params: { id: string } }) {
   const limpiarModal = () => setMensajeModal(undefined);
 
   return (
-    <Layout userLayout={true}>
+    <Layout>
       <div className="cuerpo">
         {empleo && (
           <>

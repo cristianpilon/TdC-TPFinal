@@ -1,0 +1,5 @@
+2024-12-04 23:29:19.642 -03:00 [ERR] Exception caught
+System.ArgumentException: IDX12741: JWT: '[PII of type 'System.String' is hidden. For more details, see https://aka.ms/IdentityModel/PII.]' must have three segments (JWS) or five segments (JWE).
+   at System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.ValidateToken(String token, TokenValidationParameters validationParameters, SecurityToken& validatedToken)
+   at GestorCV.API.Infraestructura.Seguridad.ManejadorTokens.ObtenerUsuarioToken(HttpRequest peticionHttp) in C:\Cristian\_Casa\TFI\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\ManejadorTokens.cs:line 43
+   at GestorCV.API.Infraestructura.Seguridad.InterceptorAuditoriaAcciones.RegistrarAuditoría(HttpContext contexto) in C:\Cristian\_Casa\TFI\TdC-TPFinal\servidor\GestorCV.API\Infraestructura\Seguridad\InterceptorAuditoriaAcciones.cs:line 63

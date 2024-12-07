@@ -560,7 +560,7 @@ export default function Admin() {
   };
 
   return (
-    <Layout userLayout={false}>
+    <Layout>
       <div className="cuerpo">
         <Tabs
           selectedIndex={tabSeleccionado}

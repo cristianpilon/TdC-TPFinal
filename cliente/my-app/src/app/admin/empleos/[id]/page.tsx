@@ -1,22 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
-import { EditorProvider } from "@tiptap/react";
-import Layout from "../../layoutUser";
+import { useState, useEffect, useRef, useMemo } from "react";
+import Layout from "../../../layoutUser";
 import { useRouter } from "next/navigation";
-import Select from "react-select";
-import {
-  fetchPrivado,
-  formatearFecha,
-  obtenerRolUsuario,
-} from "@/componentes/compartido";
+import Select, { SingleValue } from "react-select";
+import { fetchPrivado, obtenerRolUsuario } from "@/componentes/compartido";
 import Modal from "@/componentes/compartido/modal";
 import { mensajeErrorGeneral } from "@/constants";
-import Spinner from "@/componentes/compartido/spinner";
 import { SelectOpcion } from "@/componentes/compartido/select/selectOpcion";
-import ModalIdioma from "@/componentes/cv/modalIdioma";
-import { idiomasSistema } from "@/componentes/compartido/idiomas/idiomas-sistema";
-import EditorTexto from "@/componentes/compartido/editorTexto/editorTexto";
-import { extensionesEditorTexto } from "@/componentes/compartido/editorTexto/extensiones";
+import JoditEditor from "jodit-react";
 
 export default function Nuevo() {
   const { push } = useRouter();
@@ -25,15 +16,12 @@ export default function Nuevo() {
   const [tituloModal, setTituloModal] = useState<string>("");
   const [titulo, setTitulo] = useState<string>("");
   const [ubicacion, setUbicacion] = useState<string>("");
-  const [idiomas, setIdiomas] = useState<
-    Array<{
-      nombre: string;
-      nivel: string;
-    }>
-  >([]);
+  const [remuneracion, setRemuneracion] = useState<string>("");
+  const [horarios, setHorarios] = useState<string>("");
+  const [destacado, setDestacado] = useState<boolean>(false);
 
-  const [mostrarModalIdiomas, setMostrarModalIdiomas] =
-    useState<boolean>(false);
+  const editor = useRef(null);
+  const [contenidoEditor, setContenidoEditor] = useState("");
 
   const [perfiles, setPerfiles] = useState<readonly SelectOpcion[]>([]);
   const [perfilesSistema, setPerfilesSistema] = useState<SelectOpcion[]>();
@@ -41,20 +29,33 @@ export default function Nuevo() {
   const [etiquetas, setEtiquetas] = useState<readonly SelectOpcion[]>([]);
   const [etiquetasSistema, setEtiquetasSistema] = useState<SelectOpcion[]>();
 
-  useEffect(() => {
-    const rol = obtenerRolUsuario();
+  const [modalidadTrabajo, setModalidadTrabajo] = useState<string>();
+  const modalidadesTrabajoSistema: SelectOpcion[] = [
+    { label: "Full-time", value: "Full-time" },
+    { label: "Part-time", value: "Part-time" },
+    { label: "Freelance", value: "Freelance" },
+  ];
 
-    if (rol === null) {
-      return;
-    }
+  const [tipoTrabajo, setTipoTrabajo] = useState<string>();
+  const tiposTrabajoSistema: SelectOpcion[] = [
+    { label: "Presencial", value: "Presencial" },
+    { label: "Remoto", value: "Remoto" },
+    { label: "Híbrida", value: "Híbrida" },
+  ];
 
-    setRolUsuario(rol);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const configuracionEditor = useMemo(
+    () => ({
+      readonly: false, // Habilita/deshabilita solo lectura
+      language: "es", // Configura el idioma a español
+      minHeight: 285, // Establece el alto mínimo en píxeles
+      toolbarSticky: true,
+    }),
+    []
+  );
 
   useEffect(() => {
     const inicializarNuevoEmpleo = async () => {
-      await fetchPrivado("http://localhost:4000/curriculums/", "GET")
+      await fetchPrivado("http://localhost:4000/empleos/0", "GET")
         .then(async (data) => {
           if (data.ok) {
             const respuesta = await data.json();
@@ -82,7 +83,15 @@ export default function Nuevo() {
         });
     };
 
-    // obtenerDatosCv();
+    const rol = obtenerRolUsuario();
+
+    if (rol === null) {
+      return;
+    }
+
+    setRolUsuario(rol);
+
+    inicializarNuevoEmpleo();
   }, []);
 
   const guardarClick = async () => {
@@ -121,21 +130,6 @@ export default function Nuevo() {
   };
 
   const cargarDatosIniciales = (datos: any) => {
-    const { curriculum } = datos;
-
-    const datosIdiomas = curriculum.idiomas
-      ? JSON.parse(curriculum.idiomas)
-      : [];
-    setIdiomas(datosIdiomas);
-
-    if (curriculum.titulo) {
-      setTitulo(curriculum.titulo);
-    }
-
-    if (curriculum.ubicacion) {
-      setUbicacion(curriculum.ubicacion);
-    }
-
     var opcionesEtiquetas = datos.etiquetas.map(
       (x: any) => new Option(x.nombre, x.id)
     );
@@ -145,41 +139,18 @@ export default function Nuevo() {
 
     setEtiquetasSistema(opcionesEtiquetas);
     setPerfilesSistema(opcionesPerfiles);
-
-    if (curriculum.perfiles) {
-      const datosPerfiles = curriculum.perfiles.map(
-        (x: any) => new Option(x.nombre, x.id)
-      );
-      setPerfiles(datosPerfiles);
-    }
-
-    if (curriculum.etiquetas) {
-      const datosEtiquetas = curriculum.etiquetas.map(
-        (x: any) => new Option(x.nombre, x.id)
-      );
-      setEtiquetas(datosEtiquetas);
-    }
   };
 
   const backButtonClick = async () => {
     push("/admin");
   };
-
-  const clickAceptarIdioma = (nombre: string, nivel: string) => {
-    const idiomasActualizado = [...idiomas, { nombre, nivel }];
-    setIdiomas(idiomasActualizado);
-    limpiarModalIdiomas();
-  };
-
   const limpiarModal = () => setMensajeModal(undefined);
-  const limpiarModalIdiomas = () => setMostrarModalIdiomas(false);
 
   return (
-    <Layout userLayout={false}>
+    <Layout>
       <div className="cuerpo">
-        <h1 className="font-bold mb-2">Nueva vacante de empleo</h1>
-
         <div className="grid grid-cols-3 gap-4">
+          {/* Panel izquierdo */}
           <div>
             <div className="uai-shadow p-2 my-4">
               <h2 className="font-bold">Título</h2>
@@ -206,11 +177,104 @@ export default function Nuevo() {
                 required
               />
             </div>
+            <div className="uai-shadow p-2 my-4">
+              <h2 className="font-bold mb-2">Modalidad de Trabajo</h2>
+              <Select
+                className="mt-2"
+                placeholder=""
+                isLoading={!modalidadesTrabajoSistema}
+                isMulti={false}
+                onChange={(opcionSeleccionada: SingleValue<SelectOpcion>) => {
+                  opcionSeleccionada &&
+                    setModalidadTrabajo(opcionSeleccionada.value);
+                }}
+                options={modalidadesTrabajoSistema}
+                value={modalidadesTrabajoSistema.filter(function (opcion) {
+                  return opcion.value === modalidadTrabajo;
+                })}
+                isClearable={false}
+              />
+            </div>
 
+            <div className="uai-shadow p-2 my-4">
+              <h2 className="font-bold mb-2">Tipo de Trabajo</h2>
+              <Select
+                className="mt-2"
+                placeholder=""
+                isLoading={!tiposTrabajoSistema}
+                isMulti={false}
+                onChange={(opcionSeleccionada: SingleValue<SelectOpcion>) => {
+                  opcionSeleccionada &&
+                    setTipoTrabajo(opcionSeleccionada.value);
+                }}
+                options={tiposTrabajoSistema}
+                value={tiposTrabajoSistema.filter(function (opcion) {
+                  return opcion.value === tipoTrabajo;
+                })}
+                isClearable={false}
+              />
+            </div>
+            <div className="uai-shadow p-2 my-4">
+              <h2 className="font-bold">Horarios laborales</h2>
+              <input
+                type="text"
+                name="horarios"
+                value={horarios}
+                className="border w-full mt-1"
+                onChange={(e) => setHorarios(e.target.value)}
+                required
+              />
+            </div>
+
+            <div
+              className={`grid ${
+                rolUsuario === "Administrador" ? "grid-cols-2" : "grid-cols-1"
+              } gap-4 mb-2`}
+            >
+              <div className="uai-shadow p-2">
+                <h2 className="font-bold">Remuneración</h2>
+                <input
+                  type="text"
+                  name="remuneracion"
+                  value={remuneracion}
+                  className="border w-full mt-1"
+                  onChange={(e) => setRemuneracion(e.target.value)}
+                  required
+                />
+              </div>
+              {rolUsuario === "Administrador" && (
+                <div className="uai-shadow p-2">
+                  <h2 className="font-bold">Destacado</h2>
+                  <label className="flex items-center mt-1 text-right">
+                    <input
+                      type="checkbox"
+                      name="destacado"
+                      checked={destacado}
+                      className="border w-6 h-6"
+                      onChange={(e) => setDestacado(e.target.checked)}
+                    />
+                    Marcar empleo como destacado
+                  </label>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Panel derecho */}
+          <div className="col-span-2">
+            <div id="wysiwyg-editor" className="uai-shadow p-2 my-4">
+              <JoditEditor
+                ref={editor}
+                value={contenidoEditor}
+                config={configuracionEditor}
+                onChange={(nuevoContenido) =>
+                  setContenidoEditor(nuevoContenido)
+                }
+              />
+            </div>
             <div className="uai-shadow p-2 my-4">
               <h2 className="font-bold mb-2">Perfiles</h2>
               <Select
-                id="perfiles"
                 className="mt-2"
                 placeholder=""
                 isLoading={!perfilesSistema}
@@ -225,16 +289,6 @@ export default function Nuevo() {
                 Seleccione perfiles si desea recibir sugerencias
               </span>
             </div>
-          </div>
-          <div className="col-span-2">
-            <div id="tipTapEditor" className="uai-shadow p-2 my-4">
-              <EditorProvider
-                slotBefore={<EditorTexto />}
-                extensions={extensionesEditorTexto}
-                content={""}
-              ></EditorProvider>
-            </div>
-
             <div className="uai-shadow p-2 my-4">
               <h2 className="font-bold mb-2">Etiquetas</h2>
               <Select
@@ -278,14 +332,6 @@ export default function Nuevo() {
         >
           <p>{mensajeModal}</p>
         </Modal>
-      )}
-      {mostrarModalIdiomas && (
-        <ModalIdioma
-          mostrar={mostrarModalIdiomas}
-          idiomasCv={idiomas.map((x) => x.nombre)}
-          onAceptarAccion={clickAceptarIdioma}
-          onCambiarModal={limpiarModalIdiomas}
-        />
       )}
     </Layout>
   );

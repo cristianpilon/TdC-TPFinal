@@ -33,7 +33,7 @@ namespace GestorCV.API.Controllers
         {
             int? idUsuario = null;
 
-            if (UsuarioRol.Nombre == "Administrador")
+            if (UsuarioRol.Nombre != "Administrador")
             {
                 idUsuario= UsuarioId;
             }
