@@ -68,8 +68,10 @@ export default function Empleos() {
             titulo: string;
             fechaPublicacion: string;
             ubicacion: string;
-            empresa: string;
-            empresaLogo: string;
+            empresa: {
+              nombre: string;
+              logo: string;
+            };
             destacado: boolean;
             nuevo: boolean;
             remuneracion: number;
@@ -95,7 +97,6 @@ export default function Empleos() {
               fechaPublicacion,
               ubicacion,
               empresa,
-              empresaLogo,
               destacado,
               nuevo,
               remuneracion,
@@ -106,8 +107,8 @@ export default function Empleos() {
               titulo,
               fechaPublicacion,
               ubicacion,
-              empresa,
-              empresaLogo,
+              empresa: empresa.nombre,
+              empresaLogo: empresa.logo,
               destacado,
               nuevo,
               remuneracion,
@@ -148,8 +149,10 @@ export default function Empleos() {
             titulo: string;
             fechaPublicacion: string;
             ubicacion: string;
-            empresa: string;
-            empresaLogo: string;
+            empresa: {
+              nombre: string;
+              logo: string;
+            };
             destacado: boolean;
             nuevo: boolean;
             remuneracion: number;
@@ -173,7 +176,6 @@ export default function Empleos() {
               fechaPublicacion,
               ubicacion,
               empresa,
-              empresaLogo,
               destacado,
               nuevo,
               remuneracion,
@@ -183,8 +185,8 @@ export default function Empleos() {
               titulo,
               fechaPublicacion,
               ubicacion,
-              empresa,
-              empresaLogo,
+              empresa: empresa.nombre,
+              empresaLogo: empresa.logo,
               destacado,
               nuevo,
               remuneracion,
@@ -532,7 +534,7 @@ export default function Empleos() {
                             Ver oferta
                           </button>
                           <button className="boton btn-primary font-bold ml-2 py-2 px-4">
-                            Posularme
+                            Postularme
                           </button>
                         </div>
                       </div>

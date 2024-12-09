@@ -16,6 +16,14 @@ public sealed class Usuario : EntidadConAcceso
         Empresa = empresa;
     }
 
+    public Usuario(string nombre, string apellido, string correo, List<Acceso> accesos = null)
+        : base(accesos)
+    {
+        Nombre = nombre;
+        Apellido = apellido;
+        Correo = correo;
+    }
+
     public int Id { get; private set; }
 
     public string Nombre { get; private set; }
@@ -60,14 +68,4 @@ public sealed class Usuario : EntidadConAcceso
 
         return permisosFrontends;
     }
-
-    // public virtual ICollection<Notificacion> Notificaciones { get; set; } = new List<Notificacion>();
-
-    // public virtual ICollection<PerfilesUsuario> PerfilesUsuarios { get; set; } = new List<PerfilesUsuario>();
-
-    // public virtual ICollection<Postulacione> Postulaciones { get; set; } = new List<Postulacione>();
-
-    // public virtual ICollection<UsuariosGrupo> UsuariosGrupos { get; set; } = new List<UsuariosGrupo>();
-
-    // public virtual ICollection<UsuariosPermiso> UsuariosPermisos { get; set; } = new List<UsuariosPermiso>();
 }

@@ -27,10 +27,7 @@ export default function Postulacion({ params }: { params: { id: string } }) {
   const [tituloModal, setTituloModal] = useState<string>("");
   const [fecha, setFecha] = useState<string>("");
   const [estado, setEstado] = useState<string>("");
-  const [usuario, setUsuario] = useState<{
-    nombre: string;
-    apellido: string;
-  }>();
+  const [usuario, setUsuario] = useState<string>();
   const [empleo, setEmpleo] = useState<{
     titulo: string;
     ubicacion: string;
@@ -41,7 +38,17 @@ export default function Postulacion({ params }: { params: { id: string } }) {
     destacado: boolean;
     perfiles: readonly SelectOpcion[];
     etiquetas: readonly SelectOpcion[];
-  }>();
+  }>({
+    titulo: "",
+    ubicacion: "",
+    modalidadTrabajo: "",
+    tipoTrabajo: "",
+    horarios: "",
+    remuneracion: 0,
+    destacado: false,
+    perfiles: [],
+    etiquetas: [],
+  });
 
   const [curriculum, setCurriculum] = useState<{
     titulo: string;
@@ -74,7 +81,18 @@ export default function Postulacion({ params }: { params: { id: string } }) {
     }>;
     perfiles: readonly SelectOpcion[];
     etiquetas: readonly SelectOpcion[];
-  }>();
+  }>({
+    titulo: "",
+    ubicacion: "",
+    resumenProfesional: "",
+    intereses: "",
+    empleos: [],
+    estudios: [],
+    idiomas: [],
+    cursos: [],
+    perfiles: [],
+    etiquetas: [],
+  });
 
   useEffect(() => {
     const obtenerDatosPostulacion = async () => {
@@ -114,7 +132,7 @@ export default function Postulacion({ params }: { params: { id: string } }) {
         });
     };
 
-    // obtenerDatosPostulacion();
+    obtenerDatosPostulacion();
 
     const rol = obtenerRolUsuario();
 
@@ -160,7 +178,7 @@ export default function Postulacion({ params }: { params: { id: string } }) {
     nuevoEmpleo.ubicacion = datosEmpleo.ubicacion;
     nuevoEmpleo.modalidadTrabajo = datosEmpleo.modalidadTrabajo;
     nuevoEmpleo.tipoTrabajo = datosEmpleo.tipoTrabajo;
-    nuevoEmpleo.horarios = datosEmpleo.horarios;
+    nuevoEmpleo.horarios = datosEmpleo.horarioLaboral;
     nuevoEmpleo.remuneracion = datosEmpleo.remuneracion;
     nuevoEmpleo.destacado = datosEmpleo.destacado;
 
@@ -275,11 +293,36 @@ export default function Postulacion({ params }: { params: { id: string } }) {
   };
 
   const botonEstadoClick = async (nuevoEstado: string) => {
-    if (estado === EstadoPendiente || estado === nuevoEstado) {
+    if (nuevoEstado === EstadoPendiente || estado === nuevoEstado) {
       return;
     }
 
-    //push("/admin/postulaciones");
+    const estadoAnterior = estado;
+    setEstado("");
+
+    await fetchPrivado(
+      `http://localhost:4000/postulaciones/${params.id}`,
+      "PUT",
+      JSON.stringify({ estado: nuevoEstado })
+    )
+      .then(async (data) => {
+        if (data.ok) {
+          setEstado(nuevoEstado);
+          setTituloModal("Postulación actualizada");
+          setMensajeModal(
+            "Se ha realizado la actualización del estado de la postulación. El candidato será notificado a la brevedad."
+          );
+          return;
+        }
+        setTituloModal("Error");
+        setMensajeModal(mensajeErrorGeneral);
+        setEstado(estadoAnterior);
+      })
+      .catch(() => {
+        setTituloModal("Error");
+        setMensajeModal(mensajeErrorGeneral);
+        setEstado(estadoAnterior);
+      });
   };
 
   const backButtonClick = async () => {
@@ -294,9 +337,7 @@ export default function Postulacion({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-3 gap-4">
           <div>
             <h1 className="font-bold mb-2">Candidato</h1>
-            <label>
-              {usuario?.nombre} {usuario?.apellido}
-            </label>
+            <label className="text-lg">{usuario}</label>
           </div>
           <div className="col-span-2 flex">
             <div className="mr-10">

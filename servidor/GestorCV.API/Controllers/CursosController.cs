@@ -28,6 +28,7 @@ namespace GestorCV.API.Controllers
         public IActionResult Obtener(int id)
         {
             var parametros = new PeticionObtener.Parametros(id);
+
             var peticion = new PeticionObtener(parametros, new RepositorioCursos());
             var resultado = EjecutorPeticiones.Ejecutar(peticion);
 
@@ -40,6 +41,7 @@ namespace GestorCV.API.Controllers
         public IActionResult Modificar(int idCurso, PeticionModificar.Parametros parametros)
         {
             parametros.IdCurso = idCurso;
+            
             var peticion = new PeticionModificar(parametros, new RepositorioCursos());
             var resultado = EjecutorPeticiones.Ejecutar(peticion);
 
@@ -54,7 +56,6 @@ namespace GestorCV.API.Controllers
             parametros.IdUsuario = UsuarioId;
 
             var peticion = new PeticionAgregar(parametros, new RepositorioCursos());
-
             var resultado = EjecutorPeticiones.Ejecutar(peticion);
 
             return Ok(resultado);

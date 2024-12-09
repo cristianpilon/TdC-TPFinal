@@ -2,53 +2,29 @@
 using GestorCV.API.Controllers.Servicios.Interfaces;
 using GestorCV.API.Repositorios;
 using GestorCV.API.Repositorios.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GestorCV.API.Controllers.Servicios.Empleos
+namespace GestorCV.API.Controllers.Servicios.Postulaciones
 {
     public class PeticionObtener : PeticionBase
     {
         public Parametros ParametrosPeticion { get; private set; }
 
-        private readonly IRepositorioPerfiles repositorioPerfiles;
-        private readonly IRepositorioEtiquetas repositorioEtiquetas;
         private readonly IRepositorioEmpresas repositorioEmpresas;
 
         public PeticionObtener(Parametros parametros, IRepositorio repositorio)
                 : base(repositorio)
         {
             ParametrosPeticion = parametros;
-            repositorioPerfiles = new RepositorioPerfiles();
-            repositorioEtiquetas = new RepositorioEtiquetas();
             repositorioEmpresas = new RepositorioEmpresas();
         }
 
         public override IResultado Procesar()
         {
-            Resultado.EmpleoItem empleo = null;
+            var postulacion = ((IRepositorioPostulaciones)Repositorio).Obtener(ParametrosPeticion.Id);
 
-            if (ParametrosPeticion.Id > 0)
-            {
-                var empleoDto = ((IRepositorioEmpleos)Repositorio).Obtener(ParametrosPeticion.Id);
-                empleo = new Resultado.EmpleoItem
-                {
-                    Titulo = empleoDto.Titulo,
-                    Mensaje = empleoDto.Descripcion,
-                    Ubicacion = empleoDto.Ubicacion,
-                    ModalidadTrabajo = empleoDto.ModalidadTrabajo,
-                    TipoTrabajo = empleoDto.TipoTrabajo,
-                    HorarioLaboral = empleoDto.HorariosLaborales,
-                    Remuneracion = empleoDto.Remuneracion,
-                    IdEmpresa = empleoDto.Empresa.Id,
-                    Destacado = empleoDto.Destacado,
-                    Etiquetas = empleoDto.Etiquetas.Select(x => x.Id),
-                    Perfiles = empleoDto.Perfiles.Select(x => x.Id),
-                };
-            }
-
-            var perfiles = repositorioPerfiles.ObtenerTodos();
-            var etiquetas = repositorioEtiquetas.ObtenerTodos();
             IEnumerable<Resultado.EmpresaItem> empresas = null;
 
             if (ParametrosPeticion.RolUsuario == "Administrador")
@@ -60,19 +36,41 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
                 });
             }
 
-            return new Resultado 
-            { 
-                Empleo = empleo, 
-                Perfiles = perfiles, Etiquetas = etiquetas, Empresas = empresas };
+            return new Resultado
+            {
+                Estado = postulacion.Estado,
+                Fecha = postulacion.Fecha,
+                Curriculum = postulacion.Curriculum,
+                Usuario = $"{postulacion.Usuario.Nombre} {postulacion.Usuario.Apellido} ({postulacion.Usuario.Correo})",
+                Empleo = new Resultado.EmpleoItem
+                {
+                    Titulo = postulacion.Empleo.Titulo,
+                    Mensaje = postulacion.Empleo.Descripcion,
+                    Ubicacion = postulacion.Empleo.Ubicacion,
+                    ModalidadTrabajo = postulacion.Empleo.ModalidadTrabajo,
+                    TipoTrabajo = postulacion.Empleo.TipoTrabajo,
+                    HorarioLaboral = postulacion.Empleo.HorariosLaborales,
+                    Remuneracion = postulacion.Empleo.Remuneracion,
+                    IdEmpresa = postulacion.Empleo.Empresa.Id,
+                    Destacado = postulacion.Empleo.Destacado,
+                    Etiquetas = postulacion.Empleo.Etiquetas.Select(x => new Models.Dtos.Etiqueta(x.Id, x.Nombre)),
+                    Perfiles = postulacion.Empleo.Perfiles.Select(x => new Models.Dtos.Perfil(x.Id, x.Nombre)),
+                },
+                Empresas = empresas
+            };
         }
 
         public class Resultado : IResultado
         {
+            public string Usuario { get; set; }
+
+            public string Estado { get; set; }
+
+            public DateTime Fecha { get; set; }
+
             public EmpleoItem Empleo { get; set; }
 
-            public List<Models.Dtos.Etiqueta> Etiquetas { get; set; }
-
-            public List<Models.Dtos.Perfil> Perfiles { get; set; }
+            public Models.Dtos.Curriculum Curriculum { get; set; }
 
             public IEnumerable<EmpresaItem> Empresas { get; set; }
 
@@ -96,9 +94,9 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
 
                 public int IdEmpresa { get; set; }
 
-                public IEnumerable<int> Perfiles { get; set; }
+                public IEnumerable<Models.Dtos.Etiqueta> Etiquetas { get; set; }
 
-                public IEnumerable<int> Etiquetas { get; set; }
+                public IEnumerable<Models.Dtos.Perfil> Perfiles { get; set; }
             }
 
             public class EmpresaItem

@@ -8,6 +8,11 @@ public sealed class Etiqueta
         Nombre = nombre;
     }
 
+    public Etiqueta(int id)
+    {
+        Id = id;
+    }
+
     public int Id { get; private set; }
 
     public string Nombre { get; private set; }

@@ -11,10 +11,13 @@ namespace GestorCV.API.Controllers.Servicios.Postulaciones
     {
         public Parametros ParametrosPeticion { get; private set; }
 
+        private readonly IRepositorioNotificaciones repositorioNotificaciones;
+
         public PeticionAgregar(Parametros parametros, IRepositorio repositorio)
                 : base(repositorio)
         {
             ParametrosPeticion = parametros;
+            repositorioNotificaciones = new RepositorioNotificaciones();
         }
 
         public override IResultado Procesar()
@@ -33,8 +36,17 @@ namespace GestorCV.API.Controllers.Servicios.Postulaciones
                 AppConfiguration.SmtpCorreoOrigen,
                 ParametrosPeticion.CorreoUsuario,
                 $"{respuestaNuevaPostulacion.Usuario} - Nueva postulación a empleo '{respuestaNuevaPostulacion.Empleo}'",
-                $"Estimado {respuestaNuevaPostulacion.Usuario}, se ha publicado la propuesta al empleo {respuestaNuevaPostulacion.Empleo}. En breve la organización revisará su perfil e informará los resultados. Muchas Gracias");
+                $"Estimad@ {respuestaNuevaPostulacion.Usuario},<br /><br />Se ha publicado la propuesta al empleo {respuestaNuevaPostulacion.Empleo}. En breve la organización revisará su perfil e informará los resultados. <br /><br />Muchas Gracias");
+        }
 
+        private void EnviarNotificacion(RepositorioPostulaciones.RespuestaAgregarPostulacion respuestaNuevaPostulacion)
+        {
+            var mensaje = $"El usuario {respuestaNuevaPostulacion.Usuario} se ha postulado para la vacante '{respuestaNuevaPostulacion.Empleo}'.";
+
+            foreach (var usuarioId in respuestaNuevaPostulacion.UsuariosNotificacionIds)
+            {
+                repositorioNotificaciones.Agregar(new Models.Dtos.Notificacion(usuarioId, mensaje));
+            }
         }
 
         public override List<ValidacionException.Validacion> Validar()
