@@ -8,7 +8,6 @@ import { fetchPrivado } from "@/componentes/compartido";
 import imgCompania from "../../../public/compania.png";
 import Modal from "@/componentes/compartido/modal";
 import { mensajeErrorGeneral } from "@/constants";
-import Spinner from "@/componentes/compartido/spinner";
 
 export default function Admin() {
   const [titulo, setTitulo] = useState<string>("");
@@ -117,7 +116,7 @@ export default function Admin() {
     await fetchPrivado(`http://localhost:4000/empleos/${id}`, "DELETE")
       .then(async (data) => {
         if (data.ok) {
-          setTituloModal("Respaldo");
+          setTituloModal("Empleo");
           setMensajeModal("Se ha eliminado correctamente el empleo");
           obtenerEmpleos();
           return;
@@ -341,7 +340,12 @@ export default function Admin() {
                           </div>
                         </div>
                         <div className="entrada-empleo-botones mt-auto pt-2 flex justify-end">
-                          <button className="text-xs boton text-red-500 font-bold py-2 px-4">
+                          <button
+                            onClick={() => {
+                              eliminarEmpleoClick(empleo.id);
+                            }}
+                            className="text-xs boton text-red-500 font-bold py-2 px-4"
+                          >
                             Eliminar
                           </button>
                           <button

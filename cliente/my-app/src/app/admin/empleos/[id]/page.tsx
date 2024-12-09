@@ -43,7 +43,7 @@ export default function Modificar({ params }: { params: { id: string } }) {
   const tiposTrabajoSistema: SelectOpcion[] = [
     { label: "Presencial", value: "Presencial" },
     { label: "Remoto", value: "Remoto" },
-    { label: "Híbrida", value: "Híbrida" },
+    { label: "Híbrido", value: "Híbrido" },
   ];
 
   const configuracionEditor = useMemo(

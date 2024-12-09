@@ -14,6 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { push } = useRouter();
   const [mostrarModal, setMostrarModal] = useState<boolean>(false);
   const [rolUsuario, setRolUsuario] = useState<string>();
+  const [notificaciones, setNotificaciones] = useState<{}>();
   const [mostrarNotificationes, setMostrarNotificationes] =
     useState<boolean>(false);
 

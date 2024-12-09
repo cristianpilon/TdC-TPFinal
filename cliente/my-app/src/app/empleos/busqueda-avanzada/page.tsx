@@ -50,7 +50,10 @@ export default function BusquedaAvanzada() {
 
   useEffect(() => {
     const inicializar = async () => {
-      await fetchPrivado("http://localhost:4000/empleos/0", "GET")
+      await fetchPrivado(
+        "http://localhost:4000/empleos/etiquetas-perfiles",
+        "GET"
+      )
         .then(async (data) => {
           if (data.ok) {
             const respuesta = await data.json();

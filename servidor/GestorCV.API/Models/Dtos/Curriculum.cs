@@ -5,7 +5,7 @@ namespace GestorCV.API.Models.Dtos;
 public sealed class Curriculum
 {
     public Curriculum(string titulo, string ubicacion, string resumenProfesional, string experienciaLaboral, string educacion, 
-        string idiomas, string certificados, string intereses, List<Etiqueta> etiquetas, List<Perfil> perfiles)
+        string idiomas, string certificados, string intereses, IEnumerable<Etiqueta> etiquetas, IEnumerable<Perfil> perfiles)
     {
         Titulo = titulo;
         Ubicacion = ubicacion;
@@ -51,9 +51,9 @@ public sealed class Curriculum
 
     public string Intereses { get; private set; }
 
-    public List<Etiqueta> Etiquetas { get; private set; }
+    public IEnumerable<Etiqueta> Etiquetas { get; private set; }
 
-    public List<Perfil> Perfiles { get; private set; }
+    public IEnumerable<Perfil> Perfiles { get; private set; }
 }
 
 public sealed class ModificarCurriculum
@@ -74,7 +74,7 @@ public sealed class ModificarCurriculum
 
     public string Intereses { get; set; }
 
-    public List<Etiqueta> Etiquetas { get; set; }
+    public IEnumerable<Etiqueta> Etiquetas { get; set; }
 
-    public List<Perfil> Perfiles { get; set; }
+    public IEnumerable<Perfil> Perfiles { get; set; }
 }

@@ -89,7 +89,7 @@ BEGIN
 	'<h2>DESCRIPCION DEL EMPLEO</h2><p>Implementadores de Software de Gestión para nuestra sucursal de Buenos Aires</p><p>Para sumarte al equipo estamos buscando personas:</p><ul><li>Con experiencia en implementación y/o seguimiento de proyectos.</li><li>Con conocimientos en lenguajes de programación.</li><li>Software de gestión y/o procesos contables.</li><li>Con experiencia en trabajo en equipo para el cumplimiento de objetivos en tiempo y forma.</li><li>Con disponibilidad para viajar.</li></ul><p>Imaginate:</p><ul><li>Liderando proyectos de implementación de múltiples clientes en simultaneo.</li><li>Relevando necesidades y requenmiontos de nuestros clientes.</li><li>Implementando, capacitando y poniendo en marcha los distintos circuitos.</li><li>Garantizando una atención de excelencia a nuestros clientes.</li></ul><p>Modalidad:</p><ul><li>Full time.</li><li>Sucursal: Buenos aires</li></ul>',
 	'Rosario, Santa Fe', 
 	100000, 
-	'Full-Time', 
+	'Full-time', 
 	GETDATE(), 
 	'Lunes a Viernes de 8 a 16hs', 
 	'Híbrido');

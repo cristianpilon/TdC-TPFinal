@@ -21,6 +21,8 @@ namespace GestorCV.API.Repositorios
         public void Modificar(int id, Models.Dtos.Empleo empleo, bool? destacado);
 
         public RespuestaAgregarEmpleo Agregar(int idUsuario, Models.Dtos.Empleo empleoDto);
+
+        public void Eliminar(int idEmpleo);
     }
 
     /// <summary>
@@ -215,7 +217,6 @@ namespace GestorCV.API.Repositorios
             _contexto.Update(empleo);
 
             _contexto.SaveChanges();
-
         }
 
         public RespuestaAgregarEmpleo Agregar(int idUsuario, Models.Dtos.Empleo empleoDto)
@@ -288,6 +289,16 @@ namespace GestorCV.API.Repositorios
 
                 throw new ValidacionException(validaciones);
             }
+        }
+
+        public void Eliminar(int idEmpleo)
+        {
+            var empleo = _contexto.Empleos.FirstOrDefault(x => x.Id == idEmpleo);
+
+            ValidarEmpleo(empleo);
+
+            _contexto.Remove(empleo);
+            _contexto.SaveChanges();
         }
 
         public sealed class RespuestaAgregarEmpleo
