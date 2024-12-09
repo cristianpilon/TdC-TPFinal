@@ -130,8 +130,8 @@ export default function Cursos() {
                       >
                         <td className="px-6 py-4 flex font-bold">
                           <Link
-                            href={`/admin/postulaciones/[id]`}
-                            as={`/admin/postulaciones/${x.id}`}
+                            href={`/admin/cursos/[id]`}
+                            as={`/admin/cursos/${x.id}`}
                           >
                             {formatearFecha(x.fecha, true)}
                           </Link>

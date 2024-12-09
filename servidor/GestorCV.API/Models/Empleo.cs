@@ -29,11 +29,11 @@ public partial class Empleo
 
     public int IdEmpresa { get; set; }
 
+    public virtual ICollection<EtiquetasEmpleo> EtiquetasEmpleos { get; set; } = new List<EtiquetasEmpleo>();
+
     public virtual Empresa IdEmpresaNavigation { get; set; }
 
     public virtual Usuario IdUsuarioCreadorNavigation { get; set; }
-
-    public virtual ICollection<EtiquetasEmpleo> EtiquetasEmpleos { get; set; } = new List<EtiquetasEmpleo>();
 
     public virtual ICollection<PerfilesEmpleo> PerfilesEmpleos { get; set; } = new List<PerfilesEmpleo>();
 

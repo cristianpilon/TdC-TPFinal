@@ -455,7 +455,7 @@ export default function Postulacion({ params }: { params: { id: string } }) {
                 <h2 className="font-bold">Remuneración</h2>
                 <input
                   type="text"
-                  value={empleo.remuneracion.toLocaleString("en-US", {
+                  value={empleo?.remuneracion.toLocaleString("en-US", {
                     style: "currency",
                     currency: "USD",
                     minimumFractionDigits: 0,

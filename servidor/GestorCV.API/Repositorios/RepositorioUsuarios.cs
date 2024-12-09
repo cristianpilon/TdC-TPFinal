@@ -47,6 +47,7 @@ namespace GestorCV.API.Repositorios
         public Models.Dtos.Usuario ObtenerConAccesos(int idUsuario)
         {
             var usuario = _contexto.Usuarios
+                .Include(u => u.IdEmpresaNavigation)
                 .Include(u => u.IdRolNavigation)
                 .Include(u => u.IdRolNavigation.RolesPermisos)
                 .Include(u => u.IdRolNavigation.RolesGrupos)
@@ -74,7 +75,14 @@ namespace GestorCV.API.Repositorios
 
             var rol = CrearDtoRol(usuario.IdRolNavigation);
 
-            return new Models.Dtos.Usuario(usuario.Id, usuario.Nombre, usuario.Apellido, usuario.Correo, rol, accesos);
+            Empresa empresa = null;
+
+            if (usuario.IdEmpresa.HasValue)
+            {
+                empresa = new Empresa(usuario.IdEmpresa.Value, usuario.IdEmpresaNavigation.Nombre);
+            }
+
+            return new Models.Dtos.Usuario(usuario.Id, usuario.Nombre, usuario.Apellido, usuario.Correo, rol, empresa, accesos);
         }
 
         /// <summary>

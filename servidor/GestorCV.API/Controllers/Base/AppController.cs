@@ -74,6 +74,20 @@ namespace GestorCV.API.Controllers.Base
             }
         }
 
+        public Empresa UsuarioEmpresa
+        {
+            get
+            {
+                var usuario = ObtenerUsuarioToken();
+                if (usuario == null)
+                {
+                    return null;
+                }
+
+                return usuario.Empresa;
+            }
+        }
+
         public AppController()
         {
             EjecutorPeticiones = new EjecutorPeticiones();

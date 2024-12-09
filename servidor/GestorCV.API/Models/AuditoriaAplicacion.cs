@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 
-namespace GestorCV.API.Models
+namespace GestorCV.API.Models;
+
+public partial class AuditoriaAplicacion
 {
-    public partial class AuditoriaAplicacion
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public int? IdUsuario { get; set; }
+    public int? IdUsuario { get; set; }
 
-        public string Ruta { get; set; }
+    public string Ruta { get; set; }
 
-        public string Accion { get; set; }
+    public string Accion { get; set; }
 
-        public DateTime Fecha { get; set; }
-    }
+    public DateTime Fecha { get; set; }
 }

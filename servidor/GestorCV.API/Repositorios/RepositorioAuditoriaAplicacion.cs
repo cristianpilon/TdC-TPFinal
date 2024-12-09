@@ -50,7 +50,7 @@ namespace GestorCV.API.Repositorios
                 return new Models.Dtos.AuditoriaAplicacion(usuario, x.Ruta, x.Accion, x.Fecha);
             };
 
-            var autoriasAplicacion = _contexto.AuditoriasAplicacion
+            var autoriasAplicacion = _contexto.AuditoriasAplicaciones
                 .Select(mapToDto)
                 .OrderByDescending(x => x.Fecha)
                 .ToList();

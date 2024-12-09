@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GestorCV.API.Models.Dtos;
 
 public sealed class Empleo
 {
+    /// <summary>
+    /// Constructor para obtener empleos
+    /// </summary>
     public Empleo(int id, string titulo, string descripcion, string ubicacion, decimal? remuneracion, string modalidadTrabajo, DateTime fechaPublicacion,
-        string horariosLaborales, string tipoTrabajo, string empresa, string empresaLogo, bool destacado, List<Etiqueta> etiquetas, List<Perfil> perfiles)
+        string horariosLaborales, string tipoTrabajo, Empresa empresa, bool destacado, List<Etiqueta> etiquetas, List<Perfil> perfiles)
     {
         _fechaPublicacion = fechaPublicacion;
 
@@ -16,14 +20,57 @@ public sealed class Empleo
         Ubicacion = ubicacion;
         Remuneracion = remuneracion;
         ModalidadTrabajo = modalidadTrabajo;
-        FechaPublicacion = fechaPublicacion.ToString("dd/MM/yyyy");
+        FechaPublicacion = fechaPublicacion;
         HorariosLaborales = horariosLaborales;
         TipoTrabajo = tipoTrabajo;
         Empresa = empresa;
-        EmpresaLogo = empresaLogo;
         Destacado = destacado;
         Etiquetas = etiquetas;
         Perfiles = perfiles;
+    }
+
+    /// <summary>
+    /// Constructor para modificar empleo
+    /// </summary>
+    public Empleo(int id, string titulo, string descripcion, string ubicacion, decimal? remuneracion, string modalidadTrabajo, 
+        string horariosLaborales, string tipoTrabajo, IEnumerable<int> etiquetas, IEnumerable<int> perfiles)
+    {
+        _fechaPublicacion = DateTime.UtcNow;
+
+        Id = id;
+        Titulo = titulo;
+        Descripcion = descripcion;
+        Ubicacion = ubicacion;
+        Remuneracion = remuneracion;
+        ModalidadTrabajo = modalidadTrabajo;
+        FechaPublicacion = _fechaPublicacion;
+        HorariosLaborales = horariosLaborales;
+        TipoTrabajo = tipoTrabajo;
+        Etiquetas = etiquetas.Select(x => new Etiqueta(x, string.Empty)).ToList();
+        Perfiles = perfiles.Select(x => new Perfil(x, string.Empty)).ToList();
+    }
+
+    /// <summary>
+    /// Constructor para crear empleo
+    /// </summary>
+    public Empleo(string titulo, string descripcion, string ubicacion, decimal? remuneracion, string modalidadTrabajo,
+        string horariosLaborales, string tipoTrabajo, int idEmpresa, IEnumerable<int> etiquetas, IEnumerable<int> perfiles,
+        bool destacado)
+    {
+        _fechaPublicacion = DateTime.UtcNow;
+
+        Titulo = titulo;
+        Descripcion = descripcion;
+        Ubicacion = ubicacion;
+        Remuneracion = remuneracion;
+        ModalidadTrabajo = modalidadTrabajo;
+        FechaPublicacion = _fechaPublicacion;
+        HorariosLaborales = horariosLaborales;
+        TipoTrabajo = tipoTrabajo;
+        Empresa = new Empresa(idEmpresa);
+        Destacado = destacado;
+        Etiquetas = etiquetas.Select(x => new Etiqueta(x, string.Empty)).ToList();
+        Perfiles = perfiles.Select(x => new Perfil(x, string.Empty)).ToList();
     }
 
     /// <summary>
@@ -41,8 +88,8 @@ public sealed class Empleo
         Id = id;
         Titulo = titulo;
         Ubicacion = ubicacion;
-        FechaPublicacion = fechaPublicacion.ToString("dd/MM/yyyy");
-        Empresa = empresa;
+        FechaPublicacion = fechaPublicacion;
+        //Empresa = empresa;
     }
 
     private readonly DateTime _fechaPublicacion = DateTime.MinValue;
@@ -59,15 +106,13 @@ public sealed class Empleo
 
     public string ModalidadTrabajo { get; private set; }
 
-    public string FechaPublicacion { get; private set; }
+    public DateTime FechaPublicacion { get; private set; }
 
     public string HorariosLaborales { get; private set; }
 
     public string TipoTrabajo { get; private set; }
 
-    public string Empresa { get; private set; }
-
-    public string EmpresaLogo { get; private set; }
+    public Empresa Empresa { get; private set; }
 
     public bool Destacado { get; private set; }
 

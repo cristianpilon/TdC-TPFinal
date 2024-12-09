@@ -2,7 +2,9 @@
 using GestorCV.API.Controllers.Servicios.Interfaces;
 using GestorCV.API.Repositorios;
 using GestorCV.API.Repositorios.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GestorCV.API.Controllers.Servicios.Cursos
 {
@@ -20,15 +22,34 @@ namespace GestorCV.API.Controllers.Servicios.Cursos
         {
             var cursos = ((IRepositorioCursos)Repositorio).ObtenerTodos();
 
-            return new Resultado { Cursos = cursos };
+            return new Resultado
+            {
+                Cursos = cursos.Select(x => new Resultado.Item
+                {
+                    Id = x.Id,
+                    Titulo = x.Titulo,
+                    Fecha = x.Fecha,
+                    Empresa = x.Empresa.Nombre,
+                }).ToList()
+            };
         }
 
         public class Resultado : IResultado
         {
-            public List<Models.Dtos.Curso> Cursos { get; set; }
-        }
+            public List<Item> Cursos { get; set; }
 
+            public class Item
+            {
+                public int Id { get; set; }
+
+                public string Titulo { get; set; }
+
+                public DateTime Fecha { get; set; }
+
+                public string Empresa { get; set; }
+            }
+        }
         public class Parametros
-        {}
+        { }
     }
 }

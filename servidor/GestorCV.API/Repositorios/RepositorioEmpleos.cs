@@ -1,8 +1,12 @@
-﻿using GestorCV.API.Repositorios.Base;
+﻿using GestorCV.API.Infraestructura;
+using GestorCV.API.Models;
+using GestorCV.API.Repositorios.Base;
 using GestorCV.API.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using static GestorCV.API.Infraestructura.ValidacionException;
+using static GestorCV.API.Repositorios.RepositorioEmpleos;
 
 namespace GestorCV.API.Repositorios
 {
@@ -13,6 +17,10 @@ namespace GestorCV.API.Repositorios
         public Models.Dtos.Empleo Obtener(int id);
 
         public List<Models.Dtos.Empleo> ObtenerTodosSugeridos(int idUsuario);
+
+        public void Modificar(int id, Models.Dtos.Empleo empleo, bool? destacado);
+
+        public RespuestaAgregarEmpleo Agregar(int idUsuario, Models.Dtos.Empleo empleoDto);
     }
 
     /// <summary>
@@ -52,7 +60,9 @@ namespace GestorCV.API.Repositorios
                         .ToList();
 
                     return new Models.Dtos.Empleo(e.Id, e.Titulo, e.Descripcion, e.Ubicacion, e.Remuneracion, e.ModalidadTrabajo,
-                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo, e.Destacado, etiquetas, perfiles);
+                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, 
+                        new Models.Dtos.Empresa(e.IdEmpresaNavigation.Id, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo), 
+                        e.Destacado, etiquetas, perfiles);
                 })
                 .ToList();
         }
@@ -86,7 +96,7 @@ namespace GestorCV.API.Repositorios
                 .ToList();
 
             return new Models.Dtos.Empleo(empleo.Id, empleo.Titulo, empleo.Descripcion, empleo.Ubicacion, empleo.Remuneracion, empleo.ModalidadTrabajo,
-                empleo.FechaPublicacion, empleo.HorariosLaborales, empleo.TipoTrabajo, empleo.IdEmpresaNavigation.Nombre, empleo.IdEmpresaNavigation.Logo, empleo.Destacado, etiquetas, perfiles);
+                empleo.FechaPublicacion, empleo.HorariosLaborales, empleo.TipoTrabajo, new Models.Dtos.Empresa(empleo.IdEmpresaNavigation.Id, empleo.IdEmpresaNavigation.Nombre), empleo.Destacado, etiquetas, perfiles);
         }
 
         /// <summary>
@@ -142,9 +152,152 @@ namespace GestorCV.API.Repositorios
                         .ToList();
 
                     return new Models.Dtos.Empleo(e.Id, e.Titulo, e.Descripcion, e.Ubicacion, e.Remuneracion, e.ModalidadTrabajo,
-                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo, e.Destacado, etiquetas, perfiles);
+                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, 
+                        new Models.Dtos.Empresa(e.IdEmpresaNavigation.Id, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo), 
+                        e.Destacado, etiquetas, perfiles);
                 })
                 .ToList();
+        }
+
+        public void Modificar(int id, Models.Dtos.Empleo empleoDto, bool? destacado)
+        {
+            // Busca la entidad en la base de datos
+            var empleo = _contexto.Empleos
+                .Include(c => c.EtiquetasEmpleos)
+                .Include(c => c.PerfilesEmpleos)
+                .FirstOrDefault(c => c.Id == id);
+
+            ValidarEmpleo(empleo);
+
+            empleo.Titulo = empleoDto.Titulo;
+            empleo.Descripcion = empleoDto.Descripcion;
+            empleo.FechaPublicacion = empleoDto.FechaPublicacion;
+            empleo.HorariosLaborales = empleoDto.HorariosLaborales;
+            empleo.ModalidadTrabajo = empleoDto.ModalidadTrabajo;
+            empleo.TipoTrabajo = empleoDto.TipoTrabajo;
+            empleo.Ubicacion = empleoDto.Ubicacion;
+            empleo.Remuneracion = empleoDto.Remuneracion;
+
+            if (destacado.HasValue)
+            {
+                empleo.Destacado = destacado.Value;
+            }
+
+            // Actualiza etiquetas
+            _contexto.EtiquetasEmpleos.RemoveRange(empleo.EtiquetasEmpleos);
+            empleo.EtiquetasEmpleos.Clear();
+            if (empleoDto.Etiquetas != null && empleoDto.Etiquetas.Any())
+            {
+                foreach (var etiquetaDto in empleoDto.Etiquetas)
+                {
+                    empleo.EtiquetasEmpleos.Add(new EtiquetasEmpleo
+                    {
+                        IdEtiqueta = etiquetaDto.Id,
+                        IdEmpleo = empleo.Id
+                    });
+                }
+            }
+
+            _contexto.PerfilesEmpleos.RemoveRange(empleo.PerfilesEmpleos);
+            empleo.PerfilesEmpleos.Clear();
+            if (empleoDto.Perfiles != null && empleoDto.Perfiles.Any())
+            {
+                foreach (var perfilDto in empleoDto.Perfiles)
+                {
+                    empleo.PerfilesEmpleos.Add(new PerfilesEmpleo
+                    {
+                        IdPerfil = perfilDto.Id,
+                        IdEmpleo = empleo.Id
+                    });
+                }
+            }
+
+            _contexto.Update(empleo);
+
+            _contexto.SaveChanges();
+
+        }
+
+        public RespuestaAgregarEmpleo Agregar(int idUsuario, Models.Dtos.Empleo empleoDto)
+        {
+            ValidarEmpresa(empleoDto);
+
+            var nuevoEmpleo = new Models.Empleo
+            {
+                Titulo = empleoDto.Titulo,
+                Descripcion = empleoDto.Descripcion,
+                FechaPublicacion = empleoDto.FechaPublicacion,
+                IdEmpresa = empleoDto.Empresa.Id,
+                IdUsuarioCreador = idUsuario,
+                Destacado = empleoDto.Destacado,
+                HorariosLaborales = empleoDto.HorariosLaborales,
+                ModalidadTrabajo = empleoDto.ModalidadTrabajo,
+                TipoTrabajo = empleoDto.TipoTrabajo,
+                Ubicacion = empleoDto.Ubicacion,
+                Remuneracion = empleoDto.Remuneracion,
+                EtiquetasEmpleos = empleoDto.Etiquetas.Select(e => new EtiquetasEmpleo
+                {
+                    IdEtiqueta = e.Id
+                }).ToList(),
+                PerfilesEmpleos = empleoDto.Perfiles.Select(p => new PerfilesEmpleo
+                {
+                    IdPerfil = p.Id
+                }).ToList()
+            };
+
+            _contexto.Empleos.Add(nuevoEmpleo);
+            _contexto.SaveChanges();
+
+            return new RespuestaAgregarEmpleo(nuevoEmpleo.Id);
+        }
+
+        private void ValidarEmpleo(Models.Empleo empleo)
+        {
+            if (empleo == null)
+            {
+                var validaciones = new List<Validacion>
+                {
+                    new("El empleo especificado no existe.")
+                };
+
+                throw new ValidacionException(validaciones);
+            }
+        }
+
+        private void ValidarEmpresa(Models.Dtos.Empleo empleo)
+        {
+            if (empleo.Empresa == null || empleo.Empresa.Id <= 0)
+            {
+                var validaciones = new List<Validacion>
+                {
+                    new("La empresa especificada es incorrecta.")
+                };
+
+                throw new ValidacionException(validaciones);
+            }
+
+            var empresa = _contexto.Empresas
+                .FirstOrDefault(x => x.Id == empleo.Empresa.Id);
+
+            if (empresa == null)
+            {
+                var validaciones = new List<Validacion>
+                {
+                    new("La empresa especificada es incorrecta.")
+                };
+
+                throw new ValidacionException(validaciones);
+            }
+        }
+
+        public sealed class RespuestaAgregarEmpleo
+        {
+            public RespuestaAgregarEmpleo(int id)
+            {
+                Id = id;
+            }
+
+            public int Id { get; private set; }
         }
     }
 }

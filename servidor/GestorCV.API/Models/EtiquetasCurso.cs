@@ -1,4 +1,7 @@
-﻿namespace GestorCV.API.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GestorCV.API.Models;
 
 public partial class EtiquetasCurso
 {

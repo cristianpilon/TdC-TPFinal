@@ -33,5 +33,31 @@ namespace GestorCV.API.Controllers
 
             return Ok(resultado);
         }
+
+        [HttpPut("{idCurso}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Modificar(int idCurso, PeticionModificar.Parametros parametros)
+        {
+            parametros.IdCurso = idCurso;
+            var peticion = new PeticionModificar(parametros, new RepositorioCursos());
+            var resultado = EjecutorPeticiones.Ejecutar(peticion);
+
+            return Ok(resultado);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Agregar(PeticionAgregar.Parametros parametros)
+        {
+            parametros.IdUsuario = UsuarioId;
+
+            var peticion = new PeticionAgregar(parametros, new RepositorioCursos());
+
+            var resultado = EjecutorPeticiones.Ejecutar(peticion);
+
+            return Ok(resultado);
+        }
     }
 }

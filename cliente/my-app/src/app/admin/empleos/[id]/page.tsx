@@ -9,7 +9,7 @@ import { mensajeErrorGeneral } from "@/constants";
 import { SelectOpcion } from "@/componentes/compartido/select/selectOpcion";
 import JoditEditor from "jodit-react";
 
-export default function Nuevo() {
+export default function Modificar({ params }: { params: { id: string } }) {
   const { push } = useRouter();
   const [rolUsuario, setRolUsuario] = useState<string>();
   const [mensajeModal, setMensajeModal] = useState<string>();
@@ -28,6 +28,9 @@ export default function Nuevo() {
 
   const [etiquetas, setEtiquetas] = useState<readonly SelectOpcion[]>([]);
   const [etiquetasSistema, setEtiquetasSistema] = useState<SelectOpcion[]>();
+
+  const [empresa, setEmpresa] = useState<number>();
+  const [empresasSistema, setEmpresasSistema] = useState<SelectOpcion[]>([]);
 
   const [modalidadTrabajo, setModalidadTrabajo] = useState<string>();
   const modalidadesTrabajoSistema: SelectOpcion[] = [
@@ -54,12 +57,12 @@ export default function Nuevo() {
   );
 
   useEffect(() => {
-    const inicializarNuevoEmpleo = async () => {
-      await fetchPrivado("http://localhost:4000/empleos/0", "GET")
+    const inicializarEmpleo = async (rolUsuario: string) => {
+      await fetchPrivado(`http://localhost:4000/empleos/${params.id}`, "GET")
         .then(async (data) => {
           if (data.ok) {
             const respuesta = await data.json();
-            cargarDatosIniciales(respuesta);
+            cargarDatosIniciales(respuesta, rolUsuario);
 
             return;
           } else if (data.status === 400) {
@@ -91,54 +94,80 @@ export default function Nuevo() {
 
     setRolUsuario(rol);
 
-    inicializarNuevoEmpleo();
+    inicializarEmpleo(rol);
   }, []);
 
   const guardarClick = async () => {
-    // const curriculum = {
-    //   titulo,
-    //   ubicacion,
-    //   resumenProfesional,
-    //   experienciaLaboral: JSON.stringify(empleos),
-    //   educacion: JSON.stringify(estudios),
-    //   idiomas: JSON.stringify(idiomas),
-    //   certificados: JSON.stringify(cursos),
-    //   intereses,
-    //   etiquetas: etiquetas.map((x) => ({ id: x.value, nombre: x.label })),
-    //   perfiles: perfiles.map((x) => ({ id: x.value, nombre: x.label })),
-    // };
-    // await fetchPrivado(
-    //   "http://localhost:4000/curriculums/",
-    //   "PUT",
-    //   JSON.stringify({ curriculum })
-    // )
-    //   .then(async (data) => {
-    //     if (data.ok) {
-    //       setTituloModal("Curriculum");
-    //       setMensajeModal(
-    //         "Se han guardado correctamente los cambios en el curriculum"
-    //       );
-    //       return;
-    //     }
-    //     setTituloModal("Error");
-    //     setMensajeModal(mensajeErrorGeneral);
-    //   })
-    //   .catch(() => {
-    //     setTituloModal("Error");
-    //     setMensajeModal(mensajeErrorGeneral);
-    //   });
+    const empleo = {
+      titulo,
+      mensaje: contenidoEditor,
+      idEmpresa: empresa,
+      ubicacion,
+      modalidadTrabajo,
+      tipoTrabajo,
+      horarioLaboral: horarios,
+      remuneracion,
+      destacado,
+      etiquetas: etiquetas.map((x) => x.value),
+      perfiles: perfiles.map((x) => x.value),
+    };
+    await fetchPrivado(
+      `http://localhost:4000/empleos/${params.id}`,
+      "PUT",
+      JSON.stringify(empleo)
+    )
+      .then(async (data) => {
+        if (data.ok) {
+          push("/admin");
+          return;
+        }
+        setTituloModal("Error");
+        setMensajeModal(mensajeErrorGeneral);
+      })
+      .catch(() => {
+        setTituloModal("Error");
+        setMensajeModal(mensajeErrorGeneral);
+      });
   };
 
-  const cargarDatosIniciales = (datos: any) => {
-    var opcionesEtiquetas = datos.etiquetas.map(
+  const cargarDatosIniciales = (datos: any, rolUsuario: string) => {
+    const opcionesEtiquetas: SelectOpcion[] = datos.etiquetas.map(
       (x: any) => new Option(x.nombre, x.id)
     );
-    var opcionesPerfiles = datos.perfiles.map(
+    const opcionesPerfiles: SelectOpcion[] = datos.perfiles.map(
+      (x: any) => new Option(x.nombre, x.id)
+    );
+    const opcionesEmpresas: SelectOpcion[] = datos.empresas.map(
       (x: any) => new Option(x.nombre, x.id)
     );
 
     setEtiquetasSistema(opcionesEtiquetas);
     setPerfilesSistema(opcionesPerfiles);
+    setEmpresasSistema(opcionesEmpresas);
+
+    setTitulo(datos.empleo.titulo);
+    setContenidoEditor(datos.empleo.mensaje);
+    setUbicacion(datos.empleo.ubicacion);
+    setModalidadTrabajo(datos.empleo.modalidadTrabajo);
+    setTipoTrabajo(datos.empleo.tipoTrabajo);
+    setHorarios(datos.empleo.horarioLaboral);
+    setRemuneracion(datos.empleo.remuneracion);
+
+    if (rolUsuario === "Administrador") {
+      setDestacado(datos.empleo.destacado);
+      setEmpresa(datos.empleo.idEmpresa);
+    }
+
+    setEtiquetas(
+      opcionesEtiquetas.filter((x) =>
+        datos.empleo.etiquetas.includes(parseInt(x.value))
+      )
+    );
+    setPerfiles(
+      opcionesPerfiles.filter((x) =>
+        datos.empleo.perfiles.includes(parseInt(x.value))
+      )
+    );
   };
 
   const backButtonClick = async () => {
@@ -310,18 +339,42 @@ export default function Nuevo() {
           </div>
         </div>
 
-        <div className="flex mt-2">
-          <button onClick={backButtonClick} type="button" className="boton">
-            Volver
-          </button>
+        <div className="grid grid-cols-3 gap-4 mt-2">
+          <div>
+            <button onClick={backButtonClick} type="button" className="boton">
+              Volver
+            </button>
 
-          <button
-            onClick={guardarClick}
-            type="button"
-            className="boton ml-2 btn-primary"
-          >
-            Guardar
-          </button>
+            <button
+              onClick={guardarClick}
+              type="button"
+              className="boton ml-2 btn-primary"
+            >
+              Guardar
+            </button>
+          </div>
+          {rolUsuario === "Administrador" && (
+            <div className="col-span-2">
+              <div className="uai-shadow p-2">
+                <h2 className="font-bold">Empresa</h2>
+                <Select
+                  className="mt-2"
+                  isDisabled={true}
+                  placeholder=""
+                  isLoading={!empresasSistema}
+                  isMulti={false}
+                  onChange={(opcionSeleccionada: SingleValue<SelectOpcion>) => {
+                    opcionSeleccionada &&
+                      setEmpresa(parseInt(opcionSeleccionada.value));
+                  }}
+                  options={empresasSistema}
+                  value={empresasSistema?.filter(function (opcion) {
+                    return parseInt(opcion.value) === empresa;
+                  })}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {mensajeModal && (

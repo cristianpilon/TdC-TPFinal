@@ -3,6 +3,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -53,7 +54,7 @@ namespace GestorCV.API.Controllers.Servicios.Reportes.Factoria
             {
                 // Agrego filas
                 table.AddCell(empleo.Titulo);
-                table.AddCell(empleo.FechaPublicacion);
+                table.AddCell(empleo.FechaPublicacion.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture));
                 table.AddCell(empleo.Ubicacion);
                 var etiquetas = empleo.Etiquetas.Select(x => x.Nombre).ToList();
                 table.AddCell(string.Join("/", etiquetas));

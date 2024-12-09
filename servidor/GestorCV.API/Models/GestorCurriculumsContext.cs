@@ -13,11 +13,16 @@ public partial class GestorCurriculumsContext : DbContext
         : base(options)
     {
     }
+
+    public virtual DbSet<AuditoriaAplicacion> AuditoriasAplicaciones { get; set; }
+
     public virtual DbSet<Curriculum> Curriculums { get; set; }
+
+    public virtual DbSet<Curso> Cursos { get; set; }
 
     public virtual DbSet<Empleo> Empleos { get; set; }
 
-    public virtual DbSet<Curso> Cursos { get; set; }
+    public virtual DbSet<Empresa> Empresas { get; set; }
 
     public virtual DbSet<Etiqueta> Etiquetas { get; set; }
 
@@ -61,18 +66,37 @@ public partial class GestorCurriculumsContext : DbContext
 
     public virtual DbSet<UsuariosPermiso> UsuariosPermisos { get; set; }
 
-    public virtual DbSet<AuditoriaAplicacion> AuditoriasAplicacion { get; set; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer(AppConfiguration.ConnString);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AS");
+
         modelBuilder.Entity<AuditoriaAplicacion>(entity =>
         {
-            entity.Property(e => e.Ruta).IsRequired();
+            entity.ToTable("AuditoriasAplicacion");
+
             entity.Property(e => e.Accion).IsRequired();
             entity.Property(e => e.Fecha).HasColumnType("datetime");
+            entity.Property(e => e.Ruta).IsRequired();
+        });
+
+        modelBuilder.Entity<Curso>(entity =>
+        {
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+            entity.Property(e => e.Mensaje).IsRequired();
+            entity.Property(e => e.Titulo).IsRequired();
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Cursos)
+                .HasForeignKey(d => d.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Cursos_Empresas");
+
+            entity.HasOne(d => d.IdUsuarioCreadorNavigation).WithMany(p => p.Cursos)
+                .HasForeignKey(d => d.IdUsuarioCreador)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Cursos_Usuarios");
         });
 
         modelBuilder.Entity<Empleo>(entity =>
@@ -85,35 +109,21 @@ public partial class GestorCurriculumsContext : DbContext
             entity.Property(e => e.TipoTrabajo).IsRequired();
             entity.Property(e => e.Titulo).IsRequired();
             entity.Property(e => e.Ubicacion).IsRequired();
-            entity.Property(e => e.IdUsuarioCreador).IsRequired();
 
-            entity.HasOne(e => e.IdUsuarioCreadorNavigation).WithMany(u => u.Empleos)
-                .HasForeignKey(e => e.IdUsuarioCreador)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Empleos_Usuarios");
-
-            entity.HasOne(e => e.IdEmpresaNavigation).WithMany(e => e.Empleos)
-                .HasForeignKey(e => e.IdEmpresa)
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Empleos)
+                .HasForeignKey(d => d.IdEmpresa)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Empleos_Empresas");
+
+            entity.HasOne(d => d.IdUsuarioCreadorNavigation).WithMany(p => p.Empleos)
+                .HasForeignKey(d => d.IdUsuarioCreador)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Empleos_Usuarios");
         });
 
-        modelBuilder.Entity<Curso>(entity =>
+        modelBuilder.Entity<Empresa>(entity =>
         {
-            entity.Property(e => e.Mensaje).IsRequired();
-            entity.Property(e => e.Titulo).IsRequired();
-            entity.Property(e => e.Fecha).HasColumnType("datetime");
-            entity.Property(e => e.IdUsuarioCreador).IsRequired();
-
-            entity.HasOne(e => e.IdUsuarioCreadorNavigation).WithMany(u => u.Cursos)
-                .HasForeignKey(e => e.IdUsuarioCreador)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Cursos_Usuarios");
-
-            entity.HasOne(e => e.IdEmpresaNavigation).WithMany(e => e.Cursos)
-                .HasForeignKey(e => e.IdEmpresa)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Cursos_Empresas");
+            entity.Property(e => e.Nombre).IsRequired();
         });
 
         modelBuilder.Entity<Etiqueta>(entity =>
@@ -149,20 +159,19 @@ public partial class GestorCurriculumsContext : DbContext
 
         modelBuilder.Entity<EtiquetasUsuario>(entity =>
         {
-            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.EtiquetasUsuarios)
-                .HasForeignKey(d => d.IdUsuario)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_EtiquetasUsuarios_Usuarios");
-
             entity.HasOne(d => d.IdEtiquetaNavigation).WithMany(p => p.EtiquetasUsuarios)
                 .HasForeignKey(d => d.IdEtiqueta)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EtiquetasUsuarios_Etiquetas");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.EtiquetasUsuarios)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EtiquetasUsuarios_Usuarios");
         });
 
         modelBuilder.Entity<Formulario>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Nombre).IsRequired();
         });
 
@@ -203,8 +212,6 @@ public partial class GestorCurriculumsContext : DbContext
 
         modelBuilder.Entity<PerfilesCurso>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.PerfilesCursos)
                 .HasForeignKey(d => d.IdCurso)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -218,8 +225,6 @@ public partial class GestorCurriculumsContext : DbContext
 
         modelBuilder.Entity<PerfilesEmpleo>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
-
             entity.HasOne(d => d.IdEmpleoNavigation).WithMany(p => p.PerfilesEmpleos)
                 .HasForeignKey(d => d.IdEmpleo)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -273,7 +278,6 @@ public partial class GestorCurriculumsContext : DbContext
 
         modelBuilder.Entity<Rol>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Nombre).IsRequired();
         });
 
@@ -307,6 +311,7 @@ public partial class GestorCurriculumsContext : DbContext
         {
             entity.HasNoKey();
 
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.Ruta).IsRequired();
 
             entity.HasOne(d => d.IdFormularioNavigation).WithMany()
@@ -333,6 +338,11 @@ public partial class GestorCurriculumsContext : DbContext
                 .HasForeignKey(d => d.IdRol)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Usuarios_Rol");
+
+            entity.HasOne(d => d.IdEmpresaNavigation).WithMany(p => p.Usuarios)
+                .HasForeignKey(d => d.IdEmpresa)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Usuarios_Empresas");
         });
 
         modelBuilder.Entity<UsuariosGrupo>(entity =>
@@ -365,10 +375,4 @@ public partial class GestorCurriculumsContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-    // Método para ejecutar SQL plano
-    public void ExecuteRawSql(string sqlQuery, params object[] parameters)
-    {
-        Empleos.FromSqlRaw(sqlQuery, parameters);
-    }
 }

@@ -68,7 +68,7 @@ namespace GestorCV.API.Repositorios
 
             tipoRespaldo = ConvertirTipoRespaldoValorBaseDatos(tipoRespaldo);
 
-            _contexto.ExecuteRawSql("EXEC [dbo].[BackupDatabase] @ServerInstance, @DatabaseName, @BackupPath, @BackupType", instanciaServidor, nombreBaseDeDatos, rutaRespaldos, tipoRespaldo);
+            _contexto.Database.ExecuteSqlRaw("EXEC [dbo].[BackupDatabase] @ServerInstance, @DatabaseName, @BackupPath, @BackupType", instanciaServidor, nombreBaseDeDatos, rutaRespaldos, tipoRespaldo);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace GestorCV.API.Repositorios
 
             tipoRespaldo = ConvertirTipoRespaldoValorBaseDatos(tipoRespaldo);
 
-            _contexto.ExecuteRawSql("EXEC [dbo].[DeleteBackup] @DatabaseName, @BackupDate, @BackupPath, @BackupType", nombreBaseDeDatos, fecha, rutaRespaldos, tipoRespaldo);
+            _contexto.Database.ExecuteSqlRaw("EXEC [dbo].[DeleteBackup] @DatabaseName, @BackupDate, @BackupPath, @BackupType", nombreBaseDeDatos, fecha, rutaRespaldos, tipoRespaldo);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace GestorCV.API.Repositorios
         /// </summary>
         private void ValidarExistenciaStoreCrearRespaldo()
         {
-            _contexto.ExecuteRawSql(
+            _contexto.Database.ExecuteSqlRaw(
             @"
                 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.BackupDatabase') AND type IN (N'P', N'PC'))
                 BEGIN
@@ -160,7 +160,7 @@ namespace GestorCV.API.Repositorios
         /// </summary>
         private void ValidarExistenciaStoreEliminarRespaldo()
         {
-            _contexto.ExecuteRawSql(
+            _contexto.Database.ExecuteSqlRaw(
             @"
                 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.DeleteBackup') AND type IN (N'P', N'PC'))
                 BEGIN

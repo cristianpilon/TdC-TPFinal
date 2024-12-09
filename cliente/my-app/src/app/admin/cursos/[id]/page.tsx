@@ -9,7 +9,7 @@ import { mensajeErrorGeneral } from "@/constants";
 import { SelectOpcion } from "@/componentes/compartido/select/selectOpcion";
 import JoditEditor from "jodit-react";
 
-export default function NuevoCurso() {
+export default function ModificarCurso({ params }: { params: { id: string } }) {
   const { push } = useRouter();
   const [mensajeModal, setMensajeModal] = useState<string>();
   const [tituloModal, setTituloModal] = useState<string>("");
@@ -38,8 +38,8 @@ export default function NuevoCurso() {
   );
 
   useEffect(() => {
-    const inicializarNuevoCurso = async () => {
-      await fetchPrivado("http://localhost:4000/cursos/0", "GET")
+    const inicializarCurso = async () => {
+      await fetchPrivado(`http://localhost:4000/cursos/${params.id}`, "GET")
         .then(async (data) => {
           if (data.ok) {
             const respuesta = await data.json();
@@ -73,20 +73,20 @@ export default function NuevoCurso() {
       return;
     }
 
-    inicializarNuevoCurso();
+    inicializarCurso();
   }, []);
 
   const guardarClick = async () => {
     const curso = {
       titulo,
       mensaje: contenidoEditor,
-      idEmpresa: empresa,
+      IdEmpresa: empresa,
       etiquetas: etiquetas.map((x) => x.value),
       perfiles: perfiles.map((x) => x.value),
     };
     await fetchPrivado(
-      "http://localhost:4000/cursos/",
-      "POST",
+      `http://localhost:4000/cursos/${params.id}`,
+      "PUT",
       JSON.stringify(curso)
     )
       .then(async (data) => {
@@ -104,19 +104,33 @@ export default function NuevoCurso() {
   };
 
   const cargarDatosIniciales = (datos: any) => {
-    var opcionesEtiquetas = datos.etiquetas.map(
+    var opcionesEtiquetas: SelectOpcion[] = datos.etiquetas.map(
       (x: any) => new Option(x.nombre, x.id)
     );
-    var opcionesPerfiles = datos.perfiles.map(
+    var opcionesPerfiles: SelectOpcion[] = datos.perfiles.map(
       (x: any) => new Option(x.nombre, x.id)
     );
-    var opcionesEmpresas = datos.empresas.map(
+    var opcionesEmpresas: SelectOpcion[] = datos.empresas.map(
       (x: any) => new Option(x.nombre, x.id)
     );
 
     setEtiquetasSistema(opcionesEtiquetas);
     setPerfilesSistema(opcionesPerfiles);
     setEmpresasSistema(opcionesEmpresas);
+
+    setTitulo(datos.curso.titulo);
+    setContenidoEditor(datos.curso.mensaje);
+    setEmpresa(datos.curso.idEmpresa);
+    setEtiquetas(
+      opcionesEtiquetas.filter((x) =>
+        datos.curso.etiquetas.includes(parseInt(x.value))
+      )
+    );
+    setPerfiles(
+      opcionesPerfiles.filter((x) =>
+        datos.curso.perfiles.includes(parseInt(x.value))
+      )
+    );
   };
 
   const backButtonClick = async () => {
@@ -135,6 +149,7 @@ export default function NuevoCurso() {
             <Select
               className="mt-2"
               placeholder=""
+              isDisabled={true}
               isLoading={!empresasSistema}
               isMulti={false}
               onChange={(opcionSeleccionada: SingleValue<SelectOpcion>) => {

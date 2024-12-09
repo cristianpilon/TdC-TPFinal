@@ -7,11 +7,11 @@ public partial class Permiso
 {
     public int Id { get; set; }
 
-    public string Nombre { get; set; }
-
     public string Accion { get; set; }
 
     public int IdFormulario { get; set; }
+
+    public string Nombre { get; set; }
 
     public virtual ICollection<GruposPermiso> GruposPermisos { get; set; } = new List<GruposPermiso>();
 

@@ -47,8 +47,10 @@ export default function Admin() {
             fechaPublicacion: string;
             ubicacion: string;
             remuneracion: number;
-            empresa: string;
-            empresaLogo: string;
+            empresa: {
+              nombre: string;
+              logo: string;
+            };
           }>;
           const empleosMap = empleos.map<{
             id: string;
@@ -66,15 +68,14 @@ export default function Admin() {
               ubicacion,
               remuneracion,
               empresa,
-              empresaLogo,
             }) => ({
               id,
               titulo,
               fechaPublicacion,
               ubicacion,
               remuneracion,
-              empresa,
-              empresaLogo,
+              empresa: empresa.nombre,
+              empresaLogo: empresa.logo,
             })
           );
           setEmpleos(empleosMap);
@@ -101,7 +102,7 @@ export default function Admin() {
   };
 
   const crearEmpleoClick = async () => {
-    push("/admin/empleos");
+    push("/admin/empleos/nuevo");
   };
 
   const modificarEmpleoClick = async (id: number) => {
