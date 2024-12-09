@@ -40,8 +40,42 @@ namespace GestorCV.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Obtener(int id)
         {
-            var parametros = new PeticionObtener.Parametros(id);
+            var parametros = new PeticionObtener.Parametros(id, UsuarioRol.Nombre);
             var peticion = new PeticionObtener(parametros, new RepositorioEmpleos());
+            var resultado = EjecutorPeticiones.Ejecutar(peticion);
+
+            return Ok(resultado);
+        }
+
+        [HttpPut("{idEmpleo}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Modificar(int idEmpleo, PeticionModificar.Parametros parametros)
+        {
+            parametros.IdEmpleo = idEmpleo;
+            parametros.RolUsuario = UsuarioRol.Nombre;
+
+            var peticion = new PeticionModificar(parametros, new RepositorioEmpleos());
+            var resultado = EjecutorPeticiones.Ejecutar(peticion);
+
+            return Ok(resultado);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Agregar(PeticionAgregar.Parametros parametros)
+        {
+            parametros.IdUsuario = UsuarioId;
+
+            if (UsuarioRol.Nombre == "Reclutador")
+            {
+                parametros.IdEmpresa = UsuarioEmpresa.Id;
+                parametros.Destacado = false;
+            }
+
+            var peticion = new PeticionAgregar(parametros, new RepositorioEmpleos());
+
             var resultado = EjecutorPeticiones.Ejecutar(peticion);
 
             return Ok(resultado);

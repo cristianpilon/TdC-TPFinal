@@ -32,9 +32,10 @@ namespace GestorCV.API.Repositorios
         {
             var postulaciones = _contexto.Postulaciones
                 .Include(x => x.IdEmpleoNavigation)
+                .ThenInclude(x => x.IdEmpresaNavigation)
                 .Include(x => x.IdUsuarioNavigation)
                 .Where(x => !idUsuario.HasValue || x.IdUsuario == idUsuario.Value)
-                .Select(x => new Postulacion(x.IdEmpleo, x.IdUsuario, x.Estado, x.Fecha, x.IdEmpleoNavigation, x.IdUsuarioNavigation))
+                .Select(x => new Postulacion(x.Id, x.IdEmpleo, x.IdUsuario, x.Estado, x.Fecha, x.IdEmpleoNavigation, x.IdUsuarioNavigation))
                 .ToList();
 
             return postulaciones;

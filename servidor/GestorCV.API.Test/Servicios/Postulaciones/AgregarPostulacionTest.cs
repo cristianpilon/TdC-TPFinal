@@ -14,7 +14,7 @@ namespace GestorCV.API.Test.Servicios.Postulaciones
         private const string EmpleoPrueba = "Desarrollador Fullstack Senior";
         private const string UsuarioPrueba = "Lautaro Avecilla";
 
-        private Mock<IRepositorioPostulaciones> repositorioPostulacionesMock = new Mock<IRepositorioPostulaciones>(MockBehavior.Strict);
+        private Mock<IRepositorioPostulaciones> repositorioPostulacionesMock = new(MockBehavior.Strict);
 
         public AgregarPostulacionTest()
         {

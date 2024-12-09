@@ -126,10 +126,15 @@ export default function Respaldos() {
   const onTipoRespaldoChange = (e: React.FormEvent<HTMLInputElement>) => {
     setTipoRespaldo(e.currentTarget.value);
   };
+
+  const backButtonClick = async () => {
+    push("/admin");
+  };
+
   const limpiarModal = () => setMensajeModal(undefined);
 
   return (
-    <Layout userLayout={false}>
+    <Layout>
       <div className="cuerpo">
         <div className="uai-shadow p-2 my-4">
           <h2 className="font-bold mb-2 inline">Respaldos</h2>
@@ -287,6 +292,11 @@ export default function Respaldos() {
               </tbody>
             </table>
           </div>
+        </div>
+        <div className="flex mt-2">
+          <button onClick={backButtonClick} type="button" className="boton">
+            Volver
+          </button>
         </div>
         {mensajeModal && (
           <Modal

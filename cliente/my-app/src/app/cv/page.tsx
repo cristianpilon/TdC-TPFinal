@@ -396,7 +396,7 @@ export default function Cv() {
   const limpiarModalIdiomas = () => setMostrarModalIdiomas(false);
 
   return (
-    <Layout userLayout={true}>
+    <Layout>
       <div className="cuerpo">
         <h1 className="font-bold mb-2">Mi CV</h1>
 

@@ -25,6 +25,7 @@ export default function Empleos() {
       empresaLogo: string;
       destacado: boolean;
       nuevo: boolean;
+      remuneracion: number;
       perfiles: Array<string>;
       etiquetas: Array<string>;
     }>
@@ -38,6 +39,7 @@ export default function Empleos() {
       ubicacion: string;
       empresa: string;
       empresaLogo: string;
+      remuneracion: number;
       destacado: boolean;
       nuevo: boolean;
     }>
@@ -70,6 +72,7 @@ export default function Empleos() {
             empresaLogo: string;
             destacado: boolean;
             nuevo: boolean;
+            remuneracion: number;
             perfiles: Array<{ id: string; nombre: string }>;
             etiquetas: Array<{ id: string; nombre: string }>;
           }>;
@@ -82,6 +85,7 @@ export default function Empleos() {
             empresaLogo: string;
             destacado: boolean;
             nuevo: boolean;
+            remuneracion: number;
             perfiles: Array<string>;
             etiquetas: Array<string>;
           }>(
@@ -94,6 +98,7 @@ export default function Empleos() {
               empresaLogo,
               destacado,
               nuevo,
+              remuneracion,
               perfiles,
               etiquetas,
             }) => ({
@@ -105,6 +110,7 @@ export default function Empleos() {
               empresaLogo,
               destacado,
               nuevo,
+              remuneracion,
               perfiles: perfiles.map((p) => p.nombre),
               etiquetas: etiquetas.map((p) => p.nombre),
             })
@@ -146,6 +152,7 @@ export default function Empleos() {
             empresaLogo: string;
             destacado: boolean;
             nuevo: boolean;
+            remuneracion: number;
             perfiles: Array<{ id: string; nombre: string }>;
           }>;
           const empleosMap = empleos.map<{
@@ -157,6 +164,7 @@ export default function Empleos() {
             empresaLogo: string;
             destacado: boolean;
             nuevo: boolean;
+            remuneracion: number;
             perfiles: Array<string>;
           }>(
             ({
@@ -168,6 +176,7 @@ export default function Empleos() {
               empresaLogo,
               destacado,
               nuevo,
+              remuneracion,
               perfiles,
             }) => ({
               id,
@@ -178,6 +187,7 @@ export default function Empleos() {
               empresaLogo,
               destacado,
               nuevo,
+              remuneracion,
               perfiles: perfiles.map((p) => p.nombre),
             })
           );
@@ -213,8 +223,12 @@ export default function Empleos() {
     setMostrarModalReporte(true);
   };
 
+  const clickBusquedaAvanzada = () => {
+    push("/empleos/busqueda-avanzada");
+  };
+
   return (
-    <Layout userLayout={true}>
+    <Layout>
       <div className="cuerpo">
         <div className="botonera-empleos my-5 pb-4">
           <div className="relative h-9 basis-1/2 flex pr-4">
@@ -248,7 +262,10 @@ export default function Empleos() {
               {/* Descargar listado */}
             </button>
 
-            <button className="boton btn-primary text-white font-bold py-2 px-4 ml-2">
+            <button
+              onClick={clickBusquedaAvanzada}
+              className="boton btn-primary text-white font-bold py-2 px-4 ml-2"
+            >
               Búsqueda avanzada
             </button>
           </div>
@@ -365,7 +382,12 @@ export default function Empleos() {
                               d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                             />
                           </svg>
-                          $ 100.000
+                          {empleo.remuneracion.toLocaleString("en-US", {
+                            style: "currency",
+                            currency: "USD",
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0,
+                          })}
                         </div>
                       </div>
                       <div className="entrada-empleo-botones mt-auto pt-2 flex justify-end">
@@ -494,7 +516,12 @@ export default function Empleos() {
                                 d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                               />
                             </svg>
-                            $ 100.000
+                            {empleo.remuneracion.toLocaleString("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })}
                           </div>
                         </div>
                         <div className="entrada-empleo-botones mt-auto pt-2 flex justify-end">

@@ -10,13 +10,7 @@ import {
 } from "@/componentes/compartido";
 import Spinner from "@/componentes/compartido/spinner";
 
-export default function Layout({
-  children,
-  userLayout,
-}: {
-  children: React.ReactNode;
-  userLayout: boolean;
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const { push } = useRouter();
   const [mostrarModal, setMostrarModal] = useState<boolean>(false);
   const [rolUsuario, setRolUsuario] = useState<string>();
@@ -53,6 +47,15 @@ export default function Layout({
     const nuevoValor = !mostrarNotificationes;
     setMostrarNotificationes(nuevoValor);
   };
+
+  const inicioClick = () => {
+    if (rolUsuario === "Administrador") {
+      push("/admin");
+    } else {
+      push("/empleos");
+    }
+  };
+
   const cerrarSesionClick = () => {
     eliminarSesionStorage();
     push("/");
@@ -68,7 +71,31 @@ export default function Layout({
               <h1 className="Titulo1">UAI Talent Hub</h1>
               <div>
                 <ul className="flex">
-                  {userLayout && (
+                  <li>
+                    <button
+                      className="boton text-black"
+                      onClick={inicioClick}
+                      title="Inicio"
+                      style={{ minWidth: "auto", padding: "6px" }}
+                      data-dropdown-toggle="dropdownNavbar"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-3 h-6 w-6 p-0"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                        />
+                      </svg>
+                    </button>
+                  </li>
+                  {rolUsuario === "Usuario" && (
                     <>
                       <li>
                         <button onClick={miCvClick} className="boton">
@@ -85,42 +112,43 @@ export default function Layout({
                       </li>
                     </>
                   )}
-                  {!userLayout && rolUsuario === "Administrador" && (
-                    <>
-                      <li>
-                        <button
-                          onClick={auditoriasAplicacionClick}
-                          className="boton text-black"
-                        >
-                          Auditorias
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={respaldosClick}
-                          className="boton text-black"
-                        >
-                          Respaldos
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className="boton text-black"
-                          onClick={permisosClick}
-                        >
-                          Permisos
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          className="boton text-black"
-                          onClick={noImplementadoClick}
-                        >
-                          Usuarios
-                        </button>
-                      </li>
-                    </>
-                  )}
+                  {rolUsuario !== "Usuario" &&
+                    rolUsuario === "Administrador" && (
+                      <>
+                        <li>
+                          <button
+                            onClick={auditoriasAplicacionClick}
+                            className="boton text-black"
+                          >
+                            Auditorias
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            onClick={respaldosClick}
+                            className="boton text-black"
+                          >
+                            Respaldos
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="boton text-black"
+                            onClick={permisosClick}
+                          >
+                            Permisos
+                          </button>
+                        </li>
+                        <li>
+                          <button
+                            className="boton text-black"
+                            onClick={noImplementadoClick}
+                          >
+                            Usuarios
+                          </button>
+                        </li>
+                      </>
+                    )}
                   <li>
                     <button
                       className="boton text-black"

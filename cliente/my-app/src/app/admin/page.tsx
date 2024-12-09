@@ -18,6 +18,7 @@ export default function Admin() {
       titulo: string;
       fechaPublicacion: string;
       ubicacion: string;
+      remuneracion: number;
       empresa: string;
     }>
   >();
@@ -45,14 +46,18 @@ export default function Admin() {
             titulo: string;
             fechaPublicacion: string;
             ubicacion: string;
-            empresa: string;
-            empresaLogo: string;
+            remuneracion: number;
+            empresa: {
+              nombre: string;
+              logo: string;
+            };
           }>;
           const empleosMap = empleos.map<{
             id: string;
             titulo: string;
             fechaPublicacion: string;
             ubicacion: string;
+            remuneracion: number;
             empresa: string;
             empresaLogo: string;
           }>(
@@ -61,15 +66,16 @@ export default function Admin() {
               titulo,
               fechaPublicacion,
               ubicacion,
+              remuneracion,
               empresa,
-              empresaLogo,
             }) => ({
               id,
               titulo,
               fechaPublicacion,
               ubicacion,
-              empresa,
-              empresaLogo,
+              remuneracion,
+              empresa: empresa.nombre,
+              empresaLogo: empresa.logo,
             })
           );
           setEmpleos(empleosMap);
@@ -95,20 +101,20 @@ export default function Admin() {
       });
   };
 
-  // TODO: crear
-  const clickCrearEmpleo = async () => {
-    push("/admin/empleo");
+  const crearEmpleoClick = async () => {
+    push("/admin/empleos/nuevo");
   };
 
-  const clickEliminarEmpleo = async (index: number) => {
+  const modificarEmpleoClick = async (id: number) => {
+    push(`/admin/empleos/${id}`);
+  };
+
+  const eliminarEmpleoClick = async (id: number) => {
     if (!empleos) {
       return;
     }
 
-    await fetchPrivado(
-      `http://localhost:4000/empleos/${empleos[index].id}`,
-      "DELETE"
-    )
+    await fetchPrivado(`http://localhost:4000/empleos/${id}`, "DELETE")
       .then(async (data) => {
         if (data.ok) {
           setTituloModal("Respaldo");
@@ -130,10 +136,19 @@ export default function Admin() {
     setEmpleos(undefined);
     obtenerEmpleos();
   };
+
+  const clickPostulaciones = () => {
+    push("/admin/postulaciones");
+  };
+
+  const clickCursos = () => {
+    push("/admin/cursos");
+  };
+
   const limpiarModal = () => setMensajeModal(undefined);
 
   return (
-    <Layout userLayout={false}>
+    <Layout>
       <div className="cuerpo">
         <div className="botonera-empleos my-5 pb-4">
           <div className="relative h-9 basis-1/2 flex pr-4">
@@ -158,123 +173,25 @@ export default function Admin() {
               Buscar
             </button>
           </div>
-          <div className="relative h-9 basis-1/2 flex justify-end">
-            <button
-              className="ml-0 boton text-black font-bold py-2 px-4"
-              onClick={clickBuscar}
-            >
-              Postulaciones
-            </button>
+          <div className="flex">
+            <div className="relative h-9 basis-1/2 flex justify-end mr-2">
+              <button
+                className="ml-0 boton text-black font-bold py-2 px-4"
+                onClick={clickPostulaciones}
+              >
+                Postulaciones
+              </button>
+            </div>
+            <div className="relative h-9 basis-1/2 flex justify-end">
+              <button
+                className="ml-0 boton text-black font-bold py-2 px-4"
+                onClick={clickCursos}
+              >
+                Cursos
+              </button>
+            </div>
           </div>
         </div>
-        {/* <div className="uai-shadow p-2 my-4">
-          <h2 className="font-bold mb-2 inline">Empleos</h2>
-          <div className="flex mt-2">
-            <button
-              className="boton text-black flex"
-              style={{
-                minWidth: "auto",
-                minHeight: "auto",
-                padding: "5px",
-                display: "flex",
-              }}
-              onClick={clickCrearEmpleo}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="w-4 h-4 mr-1"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 4.5v15m7.5-7.5h-15"
-                />
-              </svg>
-              Crear
-            </button>
-          </div>
-          <div className="uai-shadow relative overflow-x-auto mt-4">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Empresa
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Título
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Fecha
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Ubicación
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Acciones
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {empleos &&
-                  empleos.map((x, index) => {
-                    return (
-                      <tr
-                        key={index}
-                        className="bg-white dark:bg-white dark:border-gray-700"
-                      >
-                        <td className="px-6 py-4">{x.empresa}</td>
-                        <td className="px-6 py-4">{x.titulo}</td>
-                        <td className="px-6 py-4">{x.fechaPublicacion}</td>
-                        <td className="px-6 py-4">{x.ubicacion}</td>
-
-                        <td className="px-6 py-4">
-                          <button
-                            className="boton"
-                            title="Eliminar"
-                            style={{
-                              minWidth: "auto",
-                              minHeight: "auto",
-                              color: "red",
-                              padding: "5px",
-                            }}
-                            onClick={() => {
-                              clickEliminarEmpleo(index);
-                            }}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth="1.5"
-                              stroke="currentColor"
-                              className="w-3 h-3"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18 18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                {!empleos && (
-                  <tr className="bg-white border-b dark:bg-white dark:border-gray-700">
-                    <td colSpan={5}>
-                      <Spinner />
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div> */}
         <div>
           <div className="flex mt-2">
             <h2 className="font-bold inline">Empleos</h2>
@@ -286,7 +203,7 @@ export default function Admin() {
                 padding: "5px",
                 display: "flex",
               }}
-              onClick={clickCrearEmpleo}
+              onClick={crearEmpleoClick}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -415,14 +332,24 @@ export default function Admin() {
                                 d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                               />
                             </svg>
-                            $ 100.000
+                            {empleo.remuneracion.toLocaleString("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            })}
                           </div>
                         </div>
                         <div className="entrada-empleo-botones mt-auto pt-2 flex justify-end">
                           <button className="text-xs boton text-red-500 font-bold py-2 px-4">
                             Eliminar
                           </button>
-                          <button className="ml-2 boton text-black font-bold py-2 px-4">
+                          <button
+                            onClick={() => {
+                              modificarEmpleoClick(empleo.id);
+                            }}
+                            className="ml-2 boton text-black font-bold py-2 px-4"
+                          >
                             Modificar
                           </button>
                           <button className="boton btn-primary text-white font-bold ml-2 py-2 px-4">

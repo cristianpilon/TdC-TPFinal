@@ -69,10 +69,10 @@ export default function AuditoriaPostulaciones() {
   const limpiarModal = () => setMensajeModal(undefined);
 
   return (
-    <Layout userLayout={true}>
+    <Layout>
       <div className="cuerpo">
         <div className="uai-shadow p-2 my-4">
-          <h2 className="font-bold mb-2 inline">Posulaciones</h2>
+          <h2 className="font-bold mb-2 inline">Postulaciones</h2>
           <div className="uai-shadow relative overflow-x-auto mt-4">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

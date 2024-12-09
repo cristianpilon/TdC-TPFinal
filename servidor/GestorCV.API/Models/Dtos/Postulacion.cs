@@ -13,13 +13,14 @@ public sealed class Postulacion
         IdUsuario = idUsuario;
     }
 
-    public Postulacion(int idEmpleo, int idUsuario, string estado, DateTime fecha, Models.Empleo empleo, Models.Usuario usuario)
+    public Postulacion(int id, int idEmpleo, int idUsuario, string estado, DateTime fecha, Models.Empleo empleo, Models.Usuario usuario)
     {
+        Id = id;
         Estado = estado;
         IdEmpleo = idEmpleo;
         IdUsuario = idUsuario;
         Fecha = fecha;
-        Empleo = new Empleo(empleo.Id, empleo.Empresa, empleo.Titulo, empleo.Ubicacion, empleo.FechaPublicacion);
+        Empleo = new Empleo(empleo.Id, empleo.IdEmpresaNavigation.Nombre, empleo.Titulo, empleo.Ubicacion, empleo.FechaPublicacion);
         Usuario = new Usuario(usuario.Id, usuario.Nombre, usuario.Apellido, usuario.Correo);
     }
 

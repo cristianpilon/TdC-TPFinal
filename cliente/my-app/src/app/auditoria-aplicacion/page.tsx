@@ -57,7 +57,7 @@ export default function AuditoriaAplicacion() {
   const limpiarModal = () => setMensajeModal(undefined);
 
   return (
-    <Layout userLayout={false}>
+    <Layout>
       <div className="cuerpo">
         <div className="uai-shadow p-2 my-4">
           <h2 className="font-bold mb-2 inline">Auditoria aplicación</h2>

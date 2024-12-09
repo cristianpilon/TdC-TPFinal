@@ -1,4 +1,7 @@
-﻿using GestorCV.API.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GestorCV.API.Models;
 
 public partial class EtiquetasUsuario
 {
@@ -8,7 +11,7 @@ public partial class EtiquetasUsuario
 
     public int IdEtiqueta { get; set; }
 
-    public virtual Usuario IdUsuarioNavigation { get; set; }
-
     public virtual Etiqueta IdEtiquetaNavigation { get; set; }
+
+    public virtual Usuario IdUsuarioNavigation { get; set; }
 }
