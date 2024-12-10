@@ -11,6 +11,18 @@ namespace GestorCV.API.Controllers
     [Route("[controller]")]
     public class EmpleosController : AppController
     {
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Route("busqueda-avanzada")]
+        public IActionResult ObtenerTodosAvanzado(PeticionObtenerTodosAvanzado.Parametros parametros)
+        {
+            var peticion = new PeticionObtenerTodosAvanzado(parametros, new RepositorioEmpleos());
+            var resultado = EjecutorPeticiones.Ejecutar(peticion);
+
+            return Ok(resultado);
+        }
+
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

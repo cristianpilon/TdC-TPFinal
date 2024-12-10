@@ -7,10 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System;
-using Azure;
 using Newtonsoft.Json;
 
 namespace GestorCV.API.Infraestructura.Seguridad
@@ -26,6 +24,7 @@ namespace GestorCV.API.Infraestructura.Seguridad
             repositorioUsuarios = new RepositorioUsuarios();
         }
 
+        [System.Diagnostics.DebuggerStepThrough]
         public async Task Invoke(HttpContext context)
         {
             // Si el token de autonizacion existe, valido los permisos para el usuario

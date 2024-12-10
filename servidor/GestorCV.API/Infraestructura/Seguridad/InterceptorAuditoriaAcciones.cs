@@ -26,6 +26,7 @@ namespace GestorCV.API.Infraestructura.Seguridad
             await _next(contexto);
         }
 
+        [System.Diagnostics.DebuggerStepThrough]
         private async Task RegistrarAuditoría(HttpContext contexto)
         {
             try

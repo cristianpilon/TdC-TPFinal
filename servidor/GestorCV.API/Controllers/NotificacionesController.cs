@@ -3,6 +3,7 @@ using GestorCV.API.Controllers.Servicios.Notificaciones;
 using GestorCV.API.Repositorios;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace GestorCV.API.Controllers
 {
@@ -15,6 +16,18 @@ namespace GestorCV.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult ObtenerTodos(PeticionObtenerTodos.Parametros parametros)
         {
+            if (parametros == null)
+            {
+                parametros = new PeticionObtenerTodos.Parametros();
+            }
+            else
+            {
+                if (!parametros.Limit.HasValue)
+                {
+                    parametros.Limit = DateTime.UtcNow;
+                }
+            }
+
             parametros.IdUsuario = UsuarioId;
 
             var peticion = new PeticionObtenerTodos(parametros, new RepositorioNotificaciones());
@@ -23,13 +36,18 @@ namespace GestorCV.API.Controllers
             return Ok(resultado);
         }
 
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Modificar(PeticionModificar.Parametros parametros)
+        public IActionResult Modificar()
         {
-            parametros.IdUsuario = UsuarioId;
+            var parametros = new PeticionModificar.Parametros
+            {
+                IdUsuario = UsuarioId,
+                Limit = DateTime.UtcNow
+            };
 
-            var peticion = new PeticionModificar(parametros, new RepositorioPostulaciones());
+            var peticion = new PeticionModificar(parametros, new RepositorioNotificaciones());
             var resultado = EjecutorPeticiones.Ejecutar(peticion);
 
             return Ok(resultado);

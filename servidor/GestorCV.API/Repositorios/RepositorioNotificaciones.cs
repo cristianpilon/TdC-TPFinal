@@ -30,6 +30,7 @@ namespace GestorCV.API.Repositorios
         {
             var notificaciones = _contexto.Notificaciones
                 .Where(x => x.IdUsuario == idUsuario && (!limit.HasValue || x.FechaCreacion < limit))
+                .OrderByDescending(x => x.FechaCreacion)
                 .Take(7)
                 .ToList();
 
@@ -66,16 +67,19 @@ namespace GestorCV.API.Repositorios
         public void Modificar(int idUsuario, DateTime limit)
         {
             var notificaciones = _contexto.Notificaciones
-                .Where(x => x.IdUsuario == idUsuario && x.FechaCreacion <= limit);
+                .Where(x => x.IdUsuario == idUsuario && x.FechaCreacion <= limit)
+                .ToList();
 
-            foreach (var notificacion in notificaciones)
+            if (notificaciones.Count() > 0)
             {
-                notificacion.FechaLectura = DateTime.UtcNow;
+                foreach (var notificacion in notificaciones)
+                {
+                    notificacion.FechaLectura = DateTime.UtcNow;
+                    _contexto.Update(notificacion);
+                }
+
+                _contexto.SaveChanges();
             }
-
-            _contexto.Update(notificaciones);
-
-            _contexto.SaveChanges();
         }
     }
 }
