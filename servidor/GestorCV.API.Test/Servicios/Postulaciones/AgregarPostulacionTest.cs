@@ -49,7 +49,7 @@ namespace GestorCV.API.Test.Servicios.Postulaciones
 
             // Preparo respuesta de repositorio y métodos de transacciones
             repositorioPostulacionesMock.Setup(r => r.Agregar(It.IsAny<Models.Dtos.Postulacion>()))
-                .Returns(new RepositorioPostulaciones.RespuestaAgregarPostulacion(idNuevaPostulacion, EmpleoPrueba, UsuarioPrueba));
+                .Returns(new RepositorioPostulaciones.RespuestaAgregarPostulacion(idNuevaPostulacion, EmpleoPrueba, UsuarioPrueba, new List<int> { 1 }));
             repositorioPostulacionesMock.Setup(r => r.IniciarTransaccion());
             repositorioPostulacionesMock.Setup(r => r.ConfirmarTransaccion());
 

@@ -14,7 +14,7 @@ namespace GestorCV.API.Infraestructura.Seguridad
         {
             var tokenNoSanitizado = peticionHttp.Headers["Authorization"].ToString();
 
-            if (string.IsNullOrEmpty(tokenNoSanitizado))
+            if (string.IsNullOrEmpty(tokenNoSanitizado) || tokenNoSanitizado == "bearer null")
             {
                 return null;
             }

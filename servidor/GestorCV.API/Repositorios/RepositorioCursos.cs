@@ -12,6 +12,8 @@ namespace GestorCV.API.Repositorios
 {
     public interface IRepositorioCursos : IRepositorio
     {
+        public List<Models.Dtos.Curso> ObtenerTodosPorEmpleo(int idEmpleo);
+
         public List<Models.Dtos.Curso> ObtenerTodos();
 
         public Models.Dtos.Curso Obtener(int id);
@@ -27,9 +29,53 @@ namespace GestorCV.API.Repositorios
     public sealed class RepositorioCursos : RepositorioBase, IRepositorioCursos
     {
         /// <summary>
+        /// Obtiene los cursos que mejor coinciden con el perfil del empleo indicado.
+        /// </summary>
+        /// <returns>Cursos guardados en la base de datos.</returns>
+        public List<Models.Dtos.Curso> ObtenerTodosPorEmpleo(int idEmpleo)
+        {
+            // Etiquetas y perfiles del empleo
+            var etiquetasEmpleo = _contexto.EtiquetasEmpleos
+                .Where(ee => ee.IdEmpleo == idEmpleo)
+                .Select(ee => ee.IdEtiqueta)
+                .ToList();
+
+            var perfilesEmpleo = _contexto.PerfilesEmpleos
+                .Where(pe => pe.IdEmpleo == idEmpleo)
+                .Select(pe => pe.IdPerfil)
+                .ToList();
+
+            // Busco los cursos relacionados con las etiquetas y perfiles del empleo
+            var cursosRelacionados = _contexto.Cursos
+                .Include(c => c.IdEmpresaNavigation)
+                .Include(c => c.EtiquetasCursos)
+                    .ThenInclude(ec => ec.IdEtiquetaNavigation)
+                .Include(c => c.PerfilesCursos)
+                    .ThenInclude(pc => pc.IdPerfilNavigation)
+                .Where(c => c.EtiquetasCursos.Any(ec => etiquetasEmpleo.Contains(ec.IdEtiqueta))
+                         || c.PerfilesCursos.Any(pc => perfilesEmpleo.Contains(pc.IdPerfil)))
+                .ToList();
+
+            return cursosRelacionados
+                .Select(c =>
+                {
+                    var perfiles = c.PerfilesCursos
+                        .Select(pc => new Models.Dtos.Perfil(pc.IdPerfil, pc.IdPerfilNavigation.Nombre))
+                        .ToList();
+
+                    var etiquetas = c.EtiquetasCursos
+                        .Select(pc => new Models.Dtos.Etiqueta(pc.IdEtiqueta, pc.IdEtiquetaNavigation.Nombre))
+                        .ToList();
+
+                    return new Models.Dtos.Curso(c.Id, c.Titulo, c.Mensaje, c.Fecha, new Models.Dtos.Empresa(c.IdEmpresaNavigation.Id, c.IdEmpresaNavigation.Nombre), etiquetas, perfiles);
+                })
+                .ToList();
+        }
+
+        /// <summary>
         /// Obtiene los cursos.
         /// </summary>
-        /// <returns>Cuesos guardados en la base de datos.</returns>
+        /// <returns>Cursos guardados en la base de datos.</returns>
         public List<Models.Dtos.Curso> ObtenerTodos()
         {
             var cursos = _contexto.Cursos
@@ -87,6 +133,11 @@ namespace GestorCV.API.Repositorios
             return new Models.Dtos.Curso(curso.Id, curso.Titulo, curso.Mensaje, curso.Fecha, new Models.Dtos.Empresa(curso.IdEmpresaNavigation.Id, curso.IdEmpresaNavigation.Nombre), etiquetas, perfiles);
         }
 
+        /// <summary>
+        /// Realiza la modificación del curso.
+        /// </summary>
+        /// <param name="id">ID del curso a modificar.</param>
+        /// <param name="cursoDto">Datos del curso para modificación.</param>
         public void Modificar(int id, Models.Dtos.Curso cursoDto)
         {
             // Busca la entidad en la base de datos
@@ -136,6 +187,12 @@ namespace GestorCV.API.Repositorios
 
         }
 
+        /// <summary>
+        /// Método para agregar un nuevo curso.
+        /// </summary>
+        /// <param name="idUsuario">Usuario que ingresó el curso.</param>
+        /// <param name="cursoDto">Datos del curso a agregar.</param>
+        /// <returns></returns>
         public RespuestaAgregarCurso Agregar(int idUsuario, Models.Dtos.Curso cursoDto)
         {
             ValidarEmpresa(cursoDto);

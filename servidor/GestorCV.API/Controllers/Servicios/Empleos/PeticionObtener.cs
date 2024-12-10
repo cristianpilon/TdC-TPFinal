@@ -14,6 +14,7 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
         private readonly IRepositorioPerfiles repositorioPerfiles;
         private readonly IRepositorioEtiquetas repositorioEtiquetas;
         private readonly IRepositorioEmpresas repositorioEmpresas;
+        private readonly IRepositorioCursos repositorioCursos;
 
         public PeticionObtener(Parametros parametros, IRepositorio repositorio)
                 : base(repositorio)
@@ -22,11 +23,13 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
             repositorioPerfiles = new RepositorioPerfiles();
             repositorioEtiquetas = new RepositorioEtiquetas();
             repositorioEmpresas = new RepositorioEmpresas();
+            repositorioCursos = new RepositorioCursos();
         }
 
         public override IResultado Procesar()
         {
             Resultado.EmpleoItem empleo = null;
+            List<Models.Dtos.Curso> cursos = null;
 
             if (ParametrosPeticion.Id > 0)
             {
@@ -59,11 +62,19 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
                     Nombre = x.Nombre,
                 });
             }
+            else if (ParametrosPeticion.RolUsuario == "Usuario")
+            {
+                cursos = repositorioCursos.ObtenerTodosPorEmpleo(ParametrosPeticion.Id);
+            }
 
-            return new Resultado 
-            { 
-                Empleo = empleo, 
-                Perfiles = perfiles, Etiquetas = etiquetas, Empresas = empresas };
+            return new Resultado
+            {
+                Empleo = empleo,
+                Perfiles = perfiles,
+                Etiquetas = etiquetas,
+                Empresas = empresas,
+                Cursos = cursos,
+            };
         }
 
         public class Resultado : IResultado
@@ -73,6 +84,8 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
             public List<Models.Dtos.Etiqueta> Etiquetas { get; set; }
 
             public List<Models.Dtos.Perfil> Perfiles { get; set; }
+
+            public List<Models.Dtos.Curso> Cursos { get; set; }
 
             public IEnumerable<EmpresaItem> Empresas { get; set; }
 

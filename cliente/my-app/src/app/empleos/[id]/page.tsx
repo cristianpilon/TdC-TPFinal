@@ -5,6 +5,7 @@ import Layout from "../../layoutUser";
 import { mensajeErrorGeneral } from "@/constants";
 import { fetchPrivado } from "@/componentes/compartido";
 import Modal from "@/componentes/compartido/modal";
+import Spinner from "@/componentes/compartido/spinner";
 
 export default function Empleo({ params }: { params: { id: string } }) {
   const { push } = useRouter();
@@ -24,19 +25,21 @@ export default function Empleo({ params }: { params: { id: string } }) {
     perfiles: Array<{ id: number; nombre: string }>;
     etiquetas: Array<{ id: number; nombre: string }>;
   }>();
+  const [cursos, setCursos] =
+    useState<{ id: number; titulo: string; contenido: string }[]>();
+  const [indiceCursoActivo, setIndiceCursoActivo] = useState<number | null>();
+
+  const cambiarAcordeon = (index: number) => {
+    setIndiceCursoActivo(indiceCursoActivo === index ? null : index);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetch(`http://localhost:4000/empleos/${params.id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      await fetchPrivado(`http://localhost:4000/empleos/${params.id}`, "GET")
         .then(async (data) => {
           if (data.ok) {
             const respuesta = await data.json();
-            setEmpleo(respuesta.empleo);
+            cargarDatosIniciales(respuesta);
             return;
           }
 
@@ -51,6 +54,50 @@ export default function Empleo({ params }: { params: { id: string } }) {
 
     fetchData();
   }, [params.id]);
+
+  const cargarDatosIniciales = (datos: any) => {
+    const empleoActual: {
+      id: string;
+      titulo: string;
+      descripcion: string;
+      fechaPublicacion: string;
+      ubicacion: string;
+      remuneracion: number;
+      modalidadTrabajo: string;
+      horariosLaborales: string;
+      tipoTrabajo: string;
+      perfiles: Array<{ id: number; nombre: string }>;
+      etiquetas: Array<{ id: number; nombre: string }>;
+    } = {
+      id: datos.empleo.id,
+      titulo: datos.empleo.titulo,
+      descripcion: datos.empleo.mensaje,
+      ubicacion: datos.empleo.ubicacion,
+      modalidadTrabajo: datos.empleo.modalidadTrabajo,
+      tipoTrabajo: datos.empleo.tipoTrabajo,
+      fechaPublicacion: datos.empleo.fechaPublicacion,
+      horariosLaborales: datos.empleo.horarioLaboral,
+      remuneracion: datos.empleo.remuneracion,
+      etiquetas: datos.etiquetas.filter((x: { nombre: string; id: string }) =>
+        datos.empleo.etiquetas.includes(parseInt(x.id))
+      ),
+      perfiles: datos.perfiles.filter((x: { nombre: string; id: string }) =>
+        datos.empleo.perfiles.includes(parseInt(x.id))
+      ),
+    };
+
+    setEmpleo(empleoActual);
+
+    var cursosRecomendados = datos.cursos.map(
+      (x: { id: number; titulo: string; mensaje: string }) => ({
+        id: x.id,
+        titulo: x.titulo,
+        contenido: x.mensaje,
+      })
+    );
+
+    setCursos(cursosRecomendados);
+  };
 
   const postulacionClick = async () => {
     await fetchPrivado(
@@ -204,6 +251,49 @@ export default function Empleo({ params }: { params: { id: string } }) {
             </div>
           </>
         )}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-4">
+            Cursos Recomendados
+          </h1>
+
+          {!cursos && <Spinner />}
+          {cursos && (
+            <div className="space-y-4 mb-4">
+              {cursos.map((curso, index) => (
+                <div key={curso.id} className="border rounded-lg">
+                  <button
+                    onClick={() => cambiarAcordeon(index)}
+                    className="w-full flex justify-between items-center px-4 py-2 font-semibold text-left bg-gray-200 hover:bg-gray-300 focus:outline-none"
+                  >
+                    <span>{curso.titulo}</span>
+                    <svg
+                      className={`w-4 h-4 transform transition-transform ${
+                        indiceCursoActivo === index ? "rotate-180" : ""
+                      }`}
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+                  {indiceCursoActivo === index && (
+                    <div
+                      className="px-4 py-2 bg-white"
+                      dangerouslySetInnerHTML={{ __html: curso.contenido }}
+                    ></div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
         <button onClick={backButtonClick} type="button" className="boton">
           Volver
         </button>

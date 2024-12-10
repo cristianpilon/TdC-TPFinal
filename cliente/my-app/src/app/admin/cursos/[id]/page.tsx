@@ -33,6 +33,7 @@ export default function ModificarCurso({ params }: { params: { id: string } }) {
       language: "es", // Configura el idioma a español
       minHeight: 285, // Establece el alto mínimo en píxeles
       toolbarSticky: true,
+      placeholder: "",
     }),
     []
   );

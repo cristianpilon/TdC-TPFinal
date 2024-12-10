@@ -2,8 +2,8 @@
 import { useState, useEffect, Key } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import Select from "react-select";
+import { useRouter } from "next/navigation";
 import DatePicker from "react-datepicker";
 import Layout from "../../layoutUser";
 import { mensajeErrorGeneral } from "@/constants";
@@ -25,7 +25,7 @@ export default function BusquedaAvanzada() {
 
   const [titulo, setTitulo] = useState<string>("");
   const [empresa, setEmpresa] = useState<string>("");
-  const [tipoUbicacion, setTipoUbicacion] = useState("");
+  const [tipoUbicacion, setTipoUbicacion] = useState("Localidad");
 
   const [fechaPublicacion, setFechaPublicacion] = useState<Date>();
   const [ubicacion, setUbicacion] = useState<string>("");
@@ -42,11 +42,16 @@ export default function BusquedaAvanzada() {
       empresa: string;
       empresaLogo: string;
       destacado: boolean;
+      remuneracion: number;
       nuevo: boolean;
       perfiles: Array<string>;
       etiquetas: Array<string>;
     }>
   >();
+
+  const backButtonClick = async () => {
+    push("/empleos");
+  };
 
   useEffect(() => {
     const inicializar = async () => {
@@ -99,9 +104,20 @@ export default function BusquedaAvanzada() {
   };
 
   const cargarEmpleos = async () => {
+    const criteriosBusqueda = {
+      empresa,
+      titulo,
+      ubicacion,
+      tipoUbicacion,
+      fechaDesde: fechaPublicacion,
+      etiquetas: etiquetas.map((x) => x.value),
+      perfiles: perfiles.map((x) => x.value),
+    };
+
     await fetchPrivado(
-      `http://localhost:4000/empleos/${titulo ? `?criterio=${titulo}` : ""}`,
-      "GET"
+      `http://localhost:4000/empleos/busqueda-avanzada`,
+      "POST",
+      JSON.stringify(criteriosBusqueda)
     )
       .then(async (data) => {
         if (data.ok) {
@@ -111,13 +127,18 @@ export default function BusquedaAvanzada() {
             titulo: string;
             fechaPublicacion: string;
             ubicacion: string;
-            empresa: string;
-            empresaLogo: string;
+            empresa: {
+              id: number;
+              nombre: string;
+              logo: string;
+            };
             destacado: boolean;
+            remuneracion: number;
             nuevo: boolean;
             perfiles: Array<{ id: string; nombre: string }>;
             etiquetas: Array<{ id: string; nombre: string }>;
           }>;
+
           const empleosMap = empleos.map<{
             id: string;
             titulo: string;
@@ -126,6 +147,7 @@ export default function BusquedaAvanzada() {
             empresa: string;
             empresaLogo: string;
             destacado: boolean;
+            remuneracion: number;
             nuevo: boolean;
             perfiles: Array<string>;
             etiquetas: Array<string>;
@@ -136,8 +158,8 @@ export default function BusquedaAvanzada() {
               fechaPublicacion,
               ubicacion,
               empresa,
-              empresaLogo,
               destacado,
+              remuneracion,
               nuevo,
               perfiles,
               etiquetas,
@@ -146,8 +168,9 @@ export default function BusquedaAvanzada() {
               titulo,
               fechaPublicacion,
               ubicacion,
-              empresa,
-              empresaLogo,
+              empresa: empresa.nombre,
+              empresaLogo: empresa.logo,
+              remuneracion,
               destacado,
               nuevo,
               perfiles: perfiles.map((p) => p.nombre),
@@ -186,18 +209,9 @@ export default function BusquedaAvanzada() {
   return (
     <Layout>
       <div className="cuerpo">
-        <div>
-          <div className="uai-shadow p-2 my-4">
-            <h2 className="font-bold">Empresa</h2>
-            <input
-              type="text"
-              value={empresa}
-              className="border w-full mt-1"
-              onChange={(e) => setEmpresa(e.target.value)}
-              required
-            />
-          </div>
-          <div className="uai-shadow p-2 my-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Título */}
+          <div className="uai-shadow p-2">
             <h2 className="font-bold">Título</h2>
             <input
               type="text"
@@ -207,41 +221,21 @@ export default function BusquedaAvanzada() {
               required
             />
           </div>
-          <div className="uai-shadow p-2 my-4">
-            <h2 className="font-bold">Ubicación</h2>
+
+          {/* Empresa */}
+          <div className="uai-shadow p-2">
+            <h2 className="font-bold">Empresa</h2>
             <input
               type="text"
-              value={ubicacion}
+              value={empresa}
               className="border w-full mt-1"
-              onChange={(e) => setUbicacion(e.target.value)}
+              onChange={(e) => setEmpresa(e.target.value)}
               required
             />
-            <div className="flex mt-2">
-              <label className="flex items-center mt-1">
-                <input
-                  type="radio"
-                  name="tipoUbicacion"
-                  value={"provincia"}
-                  checked={tipoUbicacion === "provincia"}
-                  onChange={(e) => setTipoUbicacion(e.target.value)}
-                  className="border"
-                />
-                <span className="ml-2">Provincia</span>
-              </label>
-              <label className="flex items-center mt-1 ml-2">
-                <input
-                  type="radio"
-                  name="tipoUbicacion"
-                  value={"localidad"}
-                  checked={tipoUbicacion === "localidad"}
-                  onChange={(e) => setTipoUbicacion(e.target.value)}
-                  className="border"
-                />
-                <span className="ml-2">Localidad</span>
-              </label>
-            </div>
           </div>
-          <div className="uai-shadow p-2 my-4">
+
+          {/* Perfiles */}
+          <div className="uai-shadow p-2">
             <h2 className="font-bold mb-2">Perfiles</h2>
             <Select
               className="mt-2"
@@ -254,7 +248,6 @@ export default function BusquedaAvanzada() {
               options={perfilesSistema}
               value={perfiles}
             />
-
             <button
               className="ml-0 boton text-black font-bold py-2 px-4 mt-2"
               onClick={clickBuscar}
@@ -262,7 +255,9 @@ export default function BusquedaAvanzada() {
               Importar mis perfiles
             </button>
           </div>
-          <div className="uai-shadow p-2 my-4">
+
+          {/* Etiquetas */}
+          <div className="uai-shadow p-2">
             <h2 className="font-bold mb-2">Etiquetas</h2>
             <Select
               id="etiquetas"
@@ -283,7 +278,45 @@ export default function BusquedaAvanzada() {
               Importar mis etiquetas
             </button>
           </div>
-          <div className="uai-shadow p-2 my-4">
+
+          {/* Ubicación */}
+          <div className="uai-shadow p-2">
+            <h2 className="font-bold">Ubicación</h2>
+            <input
+              type="text"
+              value={ubicacion}
+              className="border w-full mt-1"
+              onChange={(e) => setUbicacion(e.target.value)}
+              required
+            />
+            <div className="flex mt-2">
+              <label className="flex items-center mt-1">
+                <input
+                  type="radio"
+                  name="tipoUbicacion"
+                  value={"Localidad"}
+                  checked={tipoUbicacion === "Localidad"}
+                  onChange={(e) => setTipoUbicacion(e.target.value)}
+                  className="border"
+                />
+                <span className="ml-2">Localidad</span>
+              </label>
+              <label className="flex items-center mt-1 ml-2">
+                <input
+                  type="radio"
+                  name="tipoUbicacion"
+                  value={"Provincia"}
+                  checked={tipoUbicacion === "Provincia"}
+                  onChange={(e) => setTipoUbicacion(e.target.value)}
+                  className="border"
+                />
+                <span className="ml-2">Provincia</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Mostrar empleos publicados desde */}
+          <div className="uai-shadow p-2">
             <label className="block font-bold mb-2">
               Mostrar empleos publicados desde
             </label>
@@ -295,12 +328,24 @@ export default function BusquedaAvanzada() {
             />
           </div>
         </div>
+
         <div className="botonera-empleos my-5 pb-4">
           <button
+            disabled={
+              !titulo &&
+              !empresa &&
+              !ubicacion &&
+              !fechaPublicacion &&
+              (!etiquetas || etiquetas.length === 0) &&
+              (!perfiles || perfiles.length === 0)
+            }
             className="ml-0 boton text-black font-bold py-2 px-4"
             onClick={clickBuscar}
           >
             Buscar
+          </button>
+          <button onClick={backButtonClick} type="button" className="boton">
+            Volver
           </button>
         </div>
 

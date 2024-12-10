@@ -3,6 +3,7 @@ using GestorCV.API.Models;
 using GestorCV.API.Repositorios.Base;
 using GestorCV.API.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static GestorCV.API.Infraestructura.ValidacionException;
@@ -12,6 +13,8 @@ namespace GestorCV.API.Repositorios
 {
     public interface IRepositorioEmpleos : IRepositorio
     {
+        public List<Models.Dtos.Empleo> ObtenerTodosAvanzado(string empresa, string titulo, string ubicacion, string tipoUbicacion, DateTime? fechaDesde, IEnumerable<int> etiquetas, IEnumerable<int> perfiles);
+
         public List<Models.Dtos.Empleo> ObtenerTodos(string criterio);
 
         public Models.Dtos.Empleo Obtener(int id);
@@ -30,6 +33,93 @@ namespace GestorCV.API.Repositorios
     /// </summary>
     public sealed class RepositorioEmpleos : RepositorioBase, IRepositorioEmpleos
     {
+        /// <summary>
+        /// Obtiene los empleos buscando por un criterio más especificos.
+        /// </summary>
+        /// <param name="empresa">Criterio de empresa (contiene).</param>
+        /// <param name="titulo">Criterio de título (contiene).</param>
+        /// <param name="ubicacion">Ubicación de los empleos</param>
+        /// <param name="fechaDesde">Fecha de inicio desde de las publicaciones.</param>
+        /// <param name="etiquetas">Etiquetas del empleo.</param>
+        /// <param name="perfiles">Perfiles del empleo.</param>
+        /// <returns>Empleos guardados en la base de datos.</returns>
+        public List<Models.Dtos.Empleo> ObtenerTodosAvanzado(string empresa, string titulo, string ubicacion, string tipoUbicacion, DateTime? fechaDesde, IEnumerable<int> etiquetas, IEnumerable<int> perfiles)
+        {
+            IQueryable<Empleo> empleos = _contexto.Empleos
+                .Include(e => e.IdEmpresaNavigation)
+                .Include(e => e.EtiquetasEmpleos)
+                .ThenInclude(e => e.IdEtiquetaNavigation)
+                .Include(e => e.PerfilesEmpleos)
+                .ThenInclude(e => e.IdPerfilNavigation);
+
+            // Agregamos condiciones dinámicas
+            if (!string.IsNullOrEmpty(empresa))
+            {
+                empleos = empleos.Where(e => e.IdEmpresaNavigation.Nombre.Contains(empresa));
+            }
+
+            if (!string.IsNullOrEmpty(titulo))
+            {
+                empleos = empleos.Where(e => e.Titulo.Contains(titulo));
+            }
+
+            if (!string.IsNullOrEmpty(ubicacion) && !string.IsNullOrEmpty(tipoUbicacion))
+            {
+                if (tipoUbicacion == "Localidad")
+                {
+                    empleos = empleos
+                        .AsEnumerable()
+                        .Where(e =>
+                        {
+                            var ubicacionSinProvincia = e.Ubicacion.Substring(0, e.Ubicacion.LastIndexOf(',')).Trim();
+                            var penultimoSegmento = ubicacionSinProvincia.Substring(ubicacionSinProvincia.LastIndexOf(',') + 1).Trim();
+                            return penultimoSegmento.Contains(ubicacion);
+                        })
+                        .AsQueryable();
+                }
+                else if (tipoUbicacion == "Provincia")
+                {
+                    empleos = empleos
+                        .AsEnumerable()
+                        .Where(e => e.Ubicacion.Substring(e.Ubicacion.LastIndexOf(',') + 1).Trim().Contains(ubicacion))
+                        .AsQueryable();
+                }
+            }
+
+            if (fechaDesde.HasValue)
+            {
+                empleos = empleos.Where(e => e.FechaPublicacion >= fechaDesde.Value);
+            }
+
+            if (etiquetas != null && etiquetas.Any())
+            {
+                empleos = empleos.Where(e => e.EtiquetasEmpleos.Any(ee => etiquetas.Contains(ee.IdEtiqueta)));
+            }
+
+            if (perfiles != null && perfiles.Any())
+            {
+                empleos = empleos.Where(e => e.PerfilesEmpleos.Any(pe => perfiles.Contains(pe.IdPerfil)));
+            };
+
+            return empleos.ToList()
+                .Select(e =>
+                {
+                    var perfiles = e.PerfilesEmpleos
+                        .Select(pe => new Models.Dtos.Perfil(pe.IdPerfil, pe.IdPerfilNavigation.Nombre))
+                        .ToList();
+
+                    var etiquetas = e.EtiquetasEmpleos
+                        .Select(ee => new Models.Dtos.Etiqueta(ee.IdEtiqueta, ee.IdEtiquetaNavigation.Nombre))
+                        .ToList();
+
+                    return new Models.Dtos.Empleo(e.Id, e.Titulo, e.Descripcion, e.Ubicacion, e.Remuneracion, e.ModalidadTrabajo,
+                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo,
+                        new Models.Dtos.Empresa(e.IdEmpresaNavigation.Id, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo),
+                        e.Destacado, etiquetas, perfiles);
+                })
+                .ToList();
+        }
+
         /// <summary>
         /// Obtiene los empleos.
         /// </summary>
@@ -62,8 +152,8 @@ namespace GestorCV.API.Repositorios
                         .ToList();
 
                     return new Models.Dtos.Empleo(e.Id, e.Titulo, e.Descripcion, e.Ubicacion, e.Remuneracion, e.ModalidadTrabajo,
-                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, 
-                        new Models.Dtos.Empresa(e.IdEmpresaNavigation.Id, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo), 
+                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo,
+                        new Models.Dtos.Empresa(e.IdEmpresaNavigation.Id, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo),
                         e.Destacado, etiquetas, perfiles);
                 })
                 .ToList();
@@ -134,7 +224,7 @@ namespace GestorCV.API.Repositorios
 
             // Realiza la ordenación después de cargar los datos
             var empleosOrdenados = empleos
-                .OrderByDescending(e => 
+                .OrderByDescending(e =>
                     e.EtiquetasEmpleos.Count(ee => etiquetasUsuario.Contains(ee.IdEtiqueta))
                     + e.PerfilesEmpleos.Count(pe => perfilesUsuario.Contains(pe.IdPerfil))
                     // Si el empleo es destacado, brinda mejor posición
@@ -154,8 +244,8 @@ namespace GestorCV.API.Repositorios
                         .ToList();
 
                     return new Models.Dtos.Empleo(e.Id, e.Titulo, e.Descripcion, e.Ubicacion, e.Remuneracion, e.ModalidadTrabajo,
-                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo, 
-                        new Models.Dtos.Empresa(e.IdEmpresaNavigation.Id, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo), 
+                        e.FechaPublicacion, e.HorariosLaborales, e.TipoTrabajo,
+                        new Models.Dtos.Empresa(e.IdEmpresaNavigation.Id, e.IdEmpresaNavigation.Nombre, e.IdEmpresaNavigation.Logo),
                         e.Destacado, etiquetas, perfiles);
                 })
                 .ToList();

@@ -27,23 +27,29 @@ namespace GestorCV.API.Controllers.Servicios.Cursos
 
         public override IResultado Procesar()
         {
-            var curso = ((IRepositorioCursos)Repositorio).Obtener(ParametrosPeticion.Id);
+            Resultado.CursoItem curso = null;
 
             var perfiles = repositorioPerfiles.ObtenerTodos();
             var etiquetas = repositorioEtiquetas.ObtenerTodos();
             var empresas = repositorioEmpresas.ObtenerTodos();
 
+            if (ParametrosPeticion.Id > 0)
+            {
+                var cursoDto = ((IRepositorioCursos)Repositorio).Obtener(ParametrosPeticion.Id);
+                curso = new Resultado.CursoItem
+                {
+                    Titulo = cursoDto.Titulo,
+                    Mensaje = cursoDto.Mensaje,
+                    Fecha = cursoDto.Fecha,
+                    IdEmpresa = cursoDto.Empresa.Id,
+                    Etiquetas = cursoDto.Etiquetas.Select(x => x.Id),
+                    Perfiles = cursoDto.Perfiles.Select(x => x.Id),
+                };
+            }
+
             return new Resultado
             {
-                Curso = new Resultado.CursoItem
-                {
-                    Titulo = curso.Titulo,
-                    Mensaje = curso.Mensaje,
-                    Fecha = curso.Fecha,
-                    IdEmpresa = curso.Empresa.Id,
-                    Etiquetas = curso.Etiquetas.Select(x => x.Id),
-                    Perfiles = curso.Perfiles.Select(x => x.Id),
-                },
+                Curso = curso,
                 Perfiles = perfiles,
                 Etiquetas = etiquetas,
                 Empresas = empresas
