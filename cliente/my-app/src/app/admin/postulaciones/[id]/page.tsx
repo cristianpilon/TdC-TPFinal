@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Select from "react-select";
 import Layout from "../../../layoutUser";
@@ -28,6 +28,8 @@ export default function Postulacion({ params }: { params: { id: string } }) {
   const [fecha, setFecha] = useState<string>("");
   const [estado, setEstado] = useState<string>("");
   const [usuario, setUsuario] = useState<string>();
+  const [mostrarCalificaciones, setMostrarCalificaciones] =
+    useState<boolean>(false);
   const [empleo, setEmpleo] = useState<{
     titulo: string;
     ubicacion: string;
@@ -49,6 +51,14 @@ export default function Postulacion({ params }: { params: { id: string } }) {
     perfiles: [],
     etiquetas: [],
   });
+  const [calificaciones, setCalificaciones] = useState<
+    {
+      idUsuarioCalificador: number;
+      usuario: string;
+      puntuacion: number;
+      observaciones: string;
+    }[]
+  >();
 
   const [curriculum, setCurriculum] = useState<{
     titulo: string;
@@ -109,6 +119,21 @@ export default function Postulacion({ params }: { params: { id: string } }) {
             cargarDatosUsuario(respuesta);
             cargarDatosCv(respuesta);
             cargarDatosEmpleo(respuesta);
+            setCalificaciones([
+              {
+                idUsuarioCalificador: 5,
+                usuario: "Ignacio Riveira",
+                puntuacion: 5,
+                observaciones:
+                  "¡Excelente perfil y predisposición! Lamentablemente, no cubríamos su expectativa salarial.",
+              },
+              {
+                idUsuarioCalificador: 6,
+                usuario: "Martín Ballester",
+                puntuacion: 3,
+                observaciones: "Mas o menos",
+              },
+            ]);
 
             return;
           } else if (data.status === 400) {
@@ -142,6 +167,24 @@ export default function Postulacion({ params }: { params: { id: string } }) {
 
     setRolUsuario(rol);
   }, []);
+
+  const promedioCalificaciones = useMemo(() => {
+    if (!calificaciones) {
+      return;
+    }
+
+    if (!calificaciones || calificaciones.length === 0) {
+      return 0;
+    }
+
+    const suma = calificaciones.reduce(
+      (total, calificacion) => total + calificacion.puntuacion,
+      0
+    );
+    const promedio = suma / calificaciones.length;
+
+    return Math.round(promedio);
+  }, [calificaciones]);
 
   const cargarDatosUsuario = (datos: any) => {
     const { usuario } = datos;
@@ -330,13 +373,61 @@ export default function Postulacion({ params }: { params: { id: string } }) {
   };
 
   const limpiarModal = () => setMensajeModal(undefined);
+  const limpiarModalCalificaciones = () => setMostrarCalificaciones(false);
 
   return (
     <Layout>
       <div className="cuerpo">
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <h1 className="font-bold mb-2">Candidato</h1>
+            <div className="flex items-center mb-2">
+              <h1 className="font-bold">Candidato</h1>
+              {calificaciones && (
+                <div className="flex items-center ml-2">
+                  {Array.from({ length: 5 }, (_, index) =>
+                    index < promedioCalificaciones! ? (
+                      <svg
+                        key={index}
+                        className="w-4 h-4 text-yellow-300 ms-1"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 22 20"
+                      >
+                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                      </svg>
+                    ) : (
+                      <svg
+                        key={index}
+                        className="w-4 h-4 ms-1 text-gray-300 dark:text-gray-500"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 22 20"
+                      >
+                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                      </svg>
+                    )
+                  )}
+
+                  {!calificaciones.length && (
+                    <span className="cursor-pointer ml-2 font-bold text-blue-900 text-sm">
+                      No hay calificaciones
+                    </span>
+                  )}
+                  {!!calificaciones.length && (
+                    <span
+                      onClick={() => {
+                        setMostrarCalificaciones(true);
+                      }}
+                      className="cursor-pointer ml-2 font-bold text-blue-900 text-sm"
+                    >
+                      Ver calificaciones ({calificaciones.length})
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
             <label className="text-lg">{usuario}</label>
           </div>
           <div className="col-span-2 flex">
@@ -432,6 +523,15 @@ export default function Postulacion({ params }: { params: { id: string } }) {
             <div>
               <h1 className="font-bold mb-2">Fecha de postulación</h1>
               <label>{fecha}</label>
+            </div>
+            <div className="flex ml-4 justify-center">
+              {calificaciones && (
+                // (estado === EstadoFinalizado ||
+                //   estado === EstadoDescartado) &&
+                <button onClick={() => {}} type="button" className="boton">
+                  Calificar
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -548,7 +648,9 @@ export default function Postulacion({ params }: { params: { id: string } }) {
 
           {/* Panel derecho - Curriculum candidato */}
           <div className="col-span-2">
-            <h1 className="font-bold mb-2 underline">Datos de candidato</h1>
+            <div>
+              <h1 className="font-bold mb-2 underline">Datos de candidato</h1>
+            </div>
             <div className="uai-shadow p-2 my-4">
               <h2 className="font-bold">Título</h2>
               <input
@@ -818,6 +920,54 @@ export default function Postulacion({ params }: { params: { id: string } }) {
           <p>{mensajeModal}</p>
         </Modal>
       )}
+      <Modal
+        mostrar={mostrarCalificaciones}
+        titulo={"Calificaciones"}
+        onCambiarModal={limpiarModalCalificaciones}
+      >
+        <div className="min-w-[500px]">
+          {calificaciones &&
+            calificaciones.map((x, index) => (
+              <div key={index}>
+                <div className="flex items-center mb-2 mt-2">
+                  <h1 className="font-bold">{x.usuario}</h1>
+
+                  <div className="flex items-center ml-2">
+                    {Array.from({ length: 5 }, (_, index) =>
+                      index < x.puntuacion ? (
+                        <svg
+                          key={index}
+                          className="w-4 h-4 text-yellow-300 ms-1"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 22 20"
+                        >
+                          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                      ) : (
+                        <svg
+                          key={index}
+                          className="w-4 h-4 ms-1 text-gray-300 dark:text-gray-500"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 22 20"
+                        >
+                          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                      )
+                    )}
+                  </div>
+                </div>
+                <div className="text-left">
+                  <p className="italic">{x.observaciones}</p>
+                </div>
+                <hr className="mt-2" />
+              </div>
+            ))}
+        </div>
+      </Modal>
     </Layout>
   );
 }

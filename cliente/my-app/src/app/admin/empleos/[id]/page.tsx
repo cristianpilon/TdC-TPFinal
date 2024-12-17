@@ -138,13 +138,9 @@ export default function Modificar({ params }: { params: { id: string } }) {
     const opcionesPerfiles: SelectOpcion[] = datos.perfiles.map(
       (x: any) => new Option(x.nombre, x.id)
     );
-    const opcionesEmpresas: SelectOpcion[] = datos.empresas.map(
-      (x: any) => new Option(x.nombre, x.id)
-    );
 
     setEtiquetasSistema(opcionesEtiquetas);
     setPerfilesSistema(opcionesPerfiles);
-    setEmpresasSistema(opcionesEmpresas);
 
     setTitulo(datos.empleo.titulo);
     setContenidoEditor(datos.empleo.mensaje);
@@ -155,6 +151,10 @@ export default function Modificar({ params }: { params: { id: string } }) {
     setRemuneracion(datos.empleo.remuneracion);
 
     if (rolUsuario === "Administrador") {
+      const opcionesEmpresas: SelectOpcion[] = datos.empresas.map(
+        (x: any) => new Option(x.nombre, x.id)
+      );
+      setEmpresasSistema(opcionesEmpresas);
       setDestacado(datos.empleo.destacado);
       setEmpresa(datos.empleo.idEmpresa);
     }

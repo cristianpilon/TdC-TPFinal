@@ -28,7 +28,14 @@ namespace GestorCV.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult ObtenerTodos([FromQuery] string criterio)
         {
-            var peticion = new PeticionObtenerTodos(new PeticionObtenerTodos.Parametros(criterio), new RepositorioEmpleos());
+            var parametros = new PeticionObtenerTodos.Parametros(criterio);
+
+            if (UsuarioRol.Nombre == "Reclutador")
+            {
+                parametros.IdUsuario = UsuarioId;
+            }
+
+            var peticion = new PeticionObtenerTodos(parametros, new RepositorioEmpleos());
             var resultado = EjecutorPeticiones.Ejecutar(peticion);
 
             return Ok(resultado);

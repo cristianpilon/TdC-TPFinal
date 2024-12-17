@@ -2,8 +2,8 @@
 
 public sealed class Perfil
 {
-    public Perfil(int id, string nombre) 
-    { 
+    public Perfil(int id, string nombre)
+    {
         Id = id;
         Nombre = nombre;
     }

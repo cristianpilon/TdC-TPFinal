@@ -4,12 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import Layout from "../layoutUser";
 import { useRouter } from "next/navigation";
-import { fetchPrivado } from "@/componentes/compartido";
+import { fetchPrivado, obtenerRolUsuario } from "@/componentes/compartido";
 import imgCompania from "../../../public/compania.png";
 import Modal from "@/componentes/compartido/modal";
 import { mensajeErrorGeneral } from "@/constants";
 
 export default function Admin() {
+  const [rolUsuario, setRolUsuario] = useState<string>();
   const [titulo, setTitulo] = useState<string>("");
   const [empleos, setEmpleos] = useState<
     Array<{
@@ -28,6 +29,13 @@ export default function Admin() {
 
   useEffect(() => {
     obtenerEmpleos();
+
+    const rol = obtenerRolUsuario();
+    if (rol === null) {
+      return;
+    }
+
+    setRolUsuario(rol);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -181,14 +189,16 @@ export default function Admin() {
                 Postulaciones
               </button>
             </div>
-            <div className="relative h-9 basis-1/2 flex justify-end">
-              <button
-                className="ml-0 boton text-black font-bold py-2 px-4"
-                onClick={clickCursos}
-              >
-                Cursos
-              </button>
-            </div>
+            {rolUsuario === "Administrador" && (
+              <div className="relative h-9 basis-1/2 flex justify-end">
+                <button
+                  className="ml-0 boton text-black font-bold py-2 px-4"
+                  onClick={clickCursos}
+                >
+                  Cursos
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div>
