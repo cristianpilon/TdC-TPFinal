@@ -13,7 +13,6 @@ namespace GestorCV.API.Infraestructura.Seguridad
     /// </summary>
     public class FactoriaTokens
     {
-        public const string fixedToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjYiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiUGF1bGEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9zdXJuYW1lIjoiRmVybmFuZGV6IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2F1dGhvcml6YXRpb25kZWNpc2lvbiI6IltdIiwiZXhwIjoxODAzNTgzOTQxLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjQwMDAvIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwLyJ9.CyxMS39dL_wKv4nZrCptF03y6MnQrf2PlMDj1ojhVL8";
         /// <summary>
         /// Crea token de usuario a partir de un modelo de usuario (info de usuario y permisos de cliente).
         /// </summary>

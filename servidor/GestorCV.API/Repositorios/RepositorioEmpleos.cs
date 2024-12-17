@@ -15,7 +15,7 @@ namespace GestorCV.API.Repositorios
     {
         public List<Models.Dtos.Empleo> ObtenerTodosAvanzado(string empresa, string titulo, string ubicacion, string tipoUbicacion, DateTime? fechaDesde, IEnumerable<int> etiquetas, IEnumerable<int> perfiles);
 
-        public List<Models.Dtos.Empleo> ObtenerTodos(string criterio);
+        public List<Models.Dtos.Empleo> ObtenerTodos(string criterio, int? idUsuario);
 
         public Models.Dtos.Empleo Obtener(int id);
 
@@ -125,7 +125,7 @@ namespace GestorCV.API.Repositorios
         /// </summary>
         /// <param name="criterio">Filtro para título/empresa/ubicación.</param>
         /// <returns>Empleos guardados en la base de datos.</returns>
-        public List<Models.Dtos.Empleo> ObtenerTodos(string criterio)
+        public List<Models.Dtos.Empleo> ObtenerTodos(string criterio, int? idUsuario)
         {
             var empleos = _contexto.Empleos
                 .Include(e => e.IdEmpresaNavigation)
@@ -134,10 +134,11 @@ namespace GestorCV.API.Repositorios
                 .Include(e => e.PerfilesEmpleos)
                 .ThenInclude(e => e.IdPerfilNavigation)
                 .Where(e =>
-                    string.IsNullOrEmpty(criterio)
+                    (!idUsuario.HasValue || e.IdUsuarioCreador == idUsuario.Value)
+                    && (string.IsNullOrEmpty(criterio)
                     || e.Titulo.Contains(criterio)
                     || e.IdEmpresaNavigation.Nombre.Contains(criterio)
-                    || e.Ubicacion.Contains(criterio))
+                    || e.Ubicacion.Contains(criterio)))
                 .ToList();
 
             return empleos

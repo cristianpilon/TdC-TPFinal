@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GestorCV.API.Models.Dtos;
 
@@ -29,8 +30,8 @@ public sealed class Curriculum
         Idiomas = curriculum.Idiomas;
         Certificados = curriculum.Certificados;
         Intereses = curriculum.Intereses;
-        Etiquetas = curriculum.Etiquetas;
-        Perfiles = curriculum.Perfiles;
+        Etiquetas = curriculum.Etiquetas.Select(x => new Etiqueta(x.Id, x.Nombre));
+        Perfiles = curriculum.Perfiles.Select(x => new Perfil(x.Id, x.Nombre));
     }
 
     public int Id { get; private set; }
@@ -74,7 +75,21 @@ public sealed class ModificarCurriculum
 
     public string Intereses { get; set; }
 
-    public IEnumerable<Etiqueta> Etiquetas { get; set; }
+    public IEnumerable<EtiquetaItem> Etiquetas { get; set; }
 
-    public IEnumerable<Perfil> Perfiles { get; set; }
+    public IEnumerable<PerfilItem> Perfiles { get; set; }
+
+    public class EtiquetaItem
+    {
+        public int Id { get; set; }
+
+        public string Nombre { get; set; }
+    }
+
+    public class PerfilItem
+    {
+        public int Id { get; set; }
+
+        public string Nombre { get; set; }
+    }
 }

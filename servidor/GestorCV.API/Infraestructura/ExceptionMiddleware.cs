@@ -15,7 +15,6 @@ namespace GestorCV.API.Infraestructura
             _next = next;
         }
 
-        [System.Diagnostics.DebuggerStepThrough]
         public async Task Invoke(HttpContext context)
         {
             try

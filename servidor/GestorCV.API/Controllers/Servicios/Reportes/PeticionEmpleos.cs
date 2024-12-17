@@ -18,7 +18,7 @@ namespace GestorCV.API.Controllers.Servicios.Reportes
 
         public override IResultado Procesar()
         {
-            var empleos = ((IRepositorioEmpleos)Repositorio).ObtenerTodos(ParametrosPeticion.Criterio);
+            var empleos = ((IRepositorioEmpleos)Repositorio).ObtenerTodos(ParametrosPeticion.Criterio, null);
             var nombreArchivo = FactoriaReporteEmpleos.Crear(empleos, ParametrosPeticion.Usuario);
 
             return new Resultado { Archivo = nombreArchivo };

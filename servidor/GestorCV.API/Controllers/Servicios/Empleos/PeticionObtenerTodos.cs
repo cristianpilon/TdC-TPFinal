@@ -18,7 +18,7 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
 
         public override IResultado Procesar()
         {
-            var empleos = ((IRepositorioEmpleos)Repositorio).ObtenerTodos(ParametrosPeticion.Criterio);
+            var empleos = ((IRepositorioEmpleos)Repositorio).ObtenerTodos(ParametrosPeticion.Criterio, ParametrosPeticion.IdUsuario);
 
             return new Resultado { Empleos = empleos };
         }
@@ -30,6 +30,8 @@ namespace GestorCV.API.Controllers.Servicios.Empleos
 
         public class Parametros
         {
+            public int? IdUsuario { get; set; }
+
             public Parametros(string criterio)
             {
                 Criterio = criterio;
